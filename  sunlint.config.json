@@ -1,0 +1,35 @@
+{
+  "rules": {
+    "C003": "error",
+    "C006": "error",
+    "C018": "error",
+    "C029": "error",
+
+    "S003": "error",
+    "S009": "error",
+    "S010": "error",
+    "S019": "error",
+    "S022": "error",
+    "S030": "warn",
+
+    "T016": "error",
+    "T017": "warn",
+    "T018": "error",
+
+    "R001": "error",
+    "R002": "error",
+    "R003": "error"
+  },
+  "languages": ["typescript"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "parserOptions": {
+    "ecmaVersion": 2024,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "ai": {
+    "enabled": true,
+    "provider": "openai",
+    "model": "gpt-4o-mini"
+  }
+}

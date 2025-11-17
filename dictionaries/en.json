@@ -1,0 +1,67 @@
+{
+  "homepage": {
+    "title": "Welcome to Blog Admin",
+    "greeting": "Hello, Admin User!",
+    "viewPosts": "View Posts"
+  },
+  "languageSwitcher": {
+    "label": "Switch Language"
+  },
+
+  "common": {
+    "back": "Back"
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "signIn": "Sign In",
+      "googleSignIn": "Sign in with Google",
+      "noAccount": "Don't have an account?",
+      "register": "Register here",
+      "invalidCredentials": "Invalid email or password",
+      "signingIn": "Signing in...",
+      "invalid_email": "Invalid email",
+      "password_too_short": "Password must be at least 6 characters",
+      "login_successful": "Login successful",
+      "validation_failed": "Validation failed",
+      "server_error": "Server error occurred",
+      "orContinueWith": "Or continue with",
+      "googleSignInError": "Google sign in failed. Please try again."
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Sign up to get started",
+      "fullName": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "signUp": "Sign Up",
+      "googleSignUp": "Sign up with Google",
+      "haveAccount": "Already have an account?",
+      "login": "Login here",
+      "passwordMismatch": "Passwords do not match",
+      "emailExists": "Email already exists",
+      "registrationFailed": "Registration failed",
+      "signingUp": "Signing up...",
+      "successMessage": "Account created successfully! Please login.",
+      "successful_registration": "Registration successful! Please go to login page.",
+      "name_too_short": "Name must be at least 2 characters",
+      "email_invalid": "Invalid email address",
+      "password_too_short": "Password must be at least 6 characters",
+      "confirm_password_too_short": "Please confirm your password",
+      "server_error": "Server error occurred",
+      "orContinueWith": "Or continue with",
+      "noAccount": "Already have an account?",
+      "multipleErrors": "Multiple errors found:"
+    }
+  },
+  "useProfile": {
+    "role": "Role",
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully!"
+  }
+}
