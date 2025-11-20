@@ -1,0 +1,43 @@
+.container {
+  font-family: 'Inter', sans-serif;
+}
+
+.background {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-image: url('/images/auth-background.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.content {
+  max-width: 56rem;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.formSection {
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .formSection {
+    padding: 2.5rem;
+  }
+}
+
