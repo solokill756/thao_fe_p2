@@ -177,7 +177,11 @@
     "loadingBookings": "Đang tải đặt tour...",
     "failedToLoadBookings": "Không thể tải đặt tour",
     "bookingDeleted": "Đặt tour đã được xóa thành công",
-    "bookingDeletionFailed": "Không thể xóa đặt tour"
+    "bookingDeletionFailed": "Không thể xóa đặt tour",
+    "readyToReview": "Chuyến đi đã hoàn thành?",
+    "reviewDescription": "Chia sẻ trải nghiệm của bạn để giúp những du khách khác.",
+    "leaveReview": "Viết đánh giá",
+    "reviewDisabled": "Không thể đánh giá tour này"
   },
   "tourDetail": {
     "loginToBook": "Vui lòng đăng nhập để đặt tour này",
@@ -211,6 +215,12 @@
     "locationDescription": "Tour bao gồm các điểm đến chính:",
     "locationNote": "Vui lòng xem bản đồ bên dưới để biết các điểm hẹn và khu vực khách sạn chính.",
     "gallery": "Thư Viện Ảnh",
+    "reviewsHeading": "Đánh Giá Từ Khách Hàng",
+    "noReviewsYet": "Chưa có đánh giá nào.",
+    "beFirstReview": "Hãy là người đầu tiên chia sẻ trải nghiệm sau khi hoàn thành tour.",
+    "overallRating": "Đánh Giá Chung",
+    "ratingBreakdown": "Phân Bổ Đánh Giá",
+    "recentReviews": "Đánh Giá Gần Đây",
     "mapPlaceholder": "BẢN ĐỒ: Xem bản đồ Google Maps",
     "departureLocation": "Địa Điểm Khởi Hành",
     "viewOnGoogleMaps": "Xem trên Google Maps",
@@ -337,5 +347,23 @@
     "days": "ngày",
     "guest": "Khách",
     "guests": "Khách"
+  },
+  "review": {
+    "title": "Chia Sẻ Trải Nghiệm Của Bạn",
+    "subtitle": "Chỉ những khách đã hoàn tất và thanh toán tour mới có thể viết đánh giá.",
+    "ratingLabel": "Đánh Giá Chung",
+    "commentLabel": "Bài Đánh Giá",
+    "commentPlaceholder": "Hãy chia sẻ những điểm nổi bật, đội ngũ hướng dẫn, chỗ ở hoặc mẹo dành cho những người đi sau.",
+    "submit": "Gửi Đánh Giá",
+    "update": "Cập Nhật Đánh Giá",
+    "success": "Cảm ơn! Đánh giá của bạn đã được lưu.",
+    "error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "bookingNotFound": "Không tìm thấy đặt tour này.",
+    "notEligible": "Đặt tour này không đủ điều kiện để đánh giá.",
+    "backToBookings": "Quay lại Đặt Tour Của Tôi",
+    "selectRating": "Vui lòng chọn số sao trước khi tiếp tục.",
+    "optional": "tùy chọn",
+    "existingReviewNote": "Bạn đã gửi đánh giá cho tour này.",
+    "loading": "Đang tải thông tin đánh giá..."
   }
 }

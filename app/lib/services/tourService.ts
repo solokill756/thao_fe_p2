@@ -42,6 +42,18 @@ export const fetchTours = async (limit: number = 10, offset: number = 0) => {
           select: {
             review_id: true,
             rating: true,
+            comment: true,
+            created_at: true,
+            user: {
+              select: {
+                user_id: true,
+                full_name: true,
+                avatar_url: true,
+              },
+            },
+          },
+          orderBy: {
+            created_at: 'desc',
           },
         },
         _count: {
@@ -171,6 +183,18 @@ export const fetchTrendingTours = async (
           select: {
             review_id: true,
             rating: true,
+            comment: true,
+            created_at: true,
+            user: {
+              select: {
+                user_id: true,
+                full_name: true,
+                avatar_url: true,
+              },
+            },
+          },
+          orderBy: {
+            created_at: 'desc',
           },
         },
         _count: {
@@ -354,6 +378,18 @@ export const searchTours = async (
           select: {
             review_id: true,
             rating: true,
+            comment: true,
+            created_at: true,
+            user: {
+              select: {
+                user_id: true,
+                full_name: true,
+                avatar_url: true,
+              },
+            },
+          },
+          orderBy: {
+            created_at: 'desc',
           },
         },
         _count: {
@@ -484,6 +520,18 @@ export const fetchTourById = async (tourId: number): Promise<Tour | null> => {
           select: {
             review_id: true,
             rating: true,
+            comment: true,
+            created_at: true,
+            user: {
+              select: {
+                user_id: true,
+                full_name: true,
+                avatar_url: true,
+              },
+            },
+          },
+          orderBy: {
+            created_at: 'desc',
           },
         },
         _count: {

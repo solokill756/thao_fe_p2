@@ -92,6 +92,25 @@ export default function BookingItem({
     }).format(amount);
   };
 
+  const hasTripCompleted = () => {
+    const startDate = booking.tour?.start_date
+      ? new Date(booking.tour.start_date)
+      : new Date(booking.booking_date);
+    const durationDays = Number(booking.tour?.duration_days ?? 0);
+    const completionDate = new Date(startDate);
+    completionDate.setDate(completionDate.getDate() + durationDays);
+    return new Date() > completionDate;
+  };
+
+  const canLeaveReview =
+    booking.status === 'confirmed' &&
+    booking.payment?.status === 'completed' &&
+    !booking.userReviewSubmitted &&
+    (booking.tour?.start_date || booking.booking_date) &&
+    hasTripCompleted();
+
+  const reviewLink = `/${locale}/reviews/${booking.booking_id}`;
+
   const tourImage =
     booking.tour?.cover_image_url || PLACEHOLDER_IMAGE_URLS.TOUR;
 
@@ -173,30 +192,40 @@ export default function BookingItem({
           </div>
         </div>
       </div>
-      {booking.status === 'pending' || booking.status === 'confirmed' ? (
-        <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
-          {booking.status === 'confirmed' &&
-          (!booking.payment || booking.payment.status !== 'completed') ? (
-            <Link
-              href={`/${locale}/payment/${booking.booking_id}`}
-              className="flex-1 md:flex-none px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition text-center"
-            >
-              {profileDict.payNow || USER_PROFILE_CONSTANTS.PAY_NOW}
-            </Link>
-          ) : null}
-          {booking.status === 'pending' && (
-            <button
-              className="flex-1 md:flex-none px-4 py-2 border border-red-200 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handleCancelBooking}
-              disabled={cancelBookingMutation.isPending}
-            >
-              {cancelBookingMutation.isPending
-                ? profileDict.cancelling || USER_PROFILE_CONSTANTS.CANCELLING
-                : profileDict.cancel || USER_PROFILE_CONSTANTS.CANCEL}
-            </button>
-          )}
-        </div>
-      ) : null}
+      <div className="flex flex-col gap-2 w-full md:w-auto mt-2 md:mt-0">
+        {booking.status === 'pending' || booking.status === 'confirmed' ? (
+          <div className="flex flex-col md:flex-row gap-2">
+            {booking.status === 'confirmed' &&
+            (!booking.payment || booking.payment.status !== 'completed') ? (
+              <Link
+                href={`/${locale}/payment/${booking.booking_id}`}
+                className="flex-1 md:flex-none px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition text-center"
+              >
+                {profileDict.payNow || USER_PROFILE_CONSTANTS.PAY_NOW}
+              </Link>
+            ) : null}
+            {booking.status === 'pending' && (
+              <button
+                className="flex-1 md:flex-none px-4 py-2 border border-red-200 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleCancelBooking}
+                disabled={cancelBookingMutation.isPending}
+              >
+                {cancelBookingMutation.isPending
+                  ? profileDict.cancelling || USER_PROFILE_CONSTANTS.CANCELLING
+                  : profileDict.cancel || USER_PROFILE_CONSTANTS.CANCEL}
+              </button>
+            )}
+          </div>
+        ) : null}
+        {canLeaveReview && reviewLink && (
+          <Link
+            href={reviewLink}
+            className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium transition w-full md:w-auto"
+          >
+            {profileDict.leaveReview || USER_PROFILE_CONSTANTS.LEAVE_REVIEW}
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

@@ -66,15 +66,24 @@ export interface RatingBreakdown {
 }
 
 // Tour with all relations (from getTours)
+export interface TourReview {
+  review_id: number;
+  rating: number;
+  comment: string | null;
+  created_at: Date | null;
+  user: {
+    user_id: number;
+    full_name: string;
+    avatar_url: string | null;
+  } | null;
+}
+
 export interface Tour extends TourBase {
   categories: TourCategoryRelation[];
   destinations: TourDestinationRelation[];
   gallery: TourGallery[];
   plans: TourPlan[];
-  reviews: Array<{
-    review_id: number;
-    rating: number;
-  }>;
+  reviews: TourReview[];
   _count: {
     reviews: number;
   };
@@ -87,10 +96,7 @@ export interface TrendingTour extends TourBase {
   destinations: TourDestinationRelation[];
   gallery: TourGallery[];
   plans: TourPlan[];
-  reviews: Array<{
-    review_id: number;
-    rating: number;
-  }>;
+  reviews: TourReview[];
   _count: {
     reviews: number;
   };

@@ -141,6 +141,7 @@ export interface DictType {
   };
 
   useProfile?: {
+    back?: string;
     hasPaid?: string;
     role?: string;
     logout?: string;
@@ -182,6 +183,10 @@ export interface DictType {
     failedToLoadBookings?: string;
     bookingDeleted?: string;
     bookingDeletionFailed?: string;
+    readyToReview?: string;
+    reviewDescription?: string;
+    leaveReview?: string;
+    reviewDisabled?: string;
   };
   tourDetail?: {
     loginToBook?: string;
@@ -236,6 +241,12 @@ export interface DictType {
       fillAllFields?: string;
       duplicateBooking?: string;
     };
+    reviewsHeading?: string;
+    noReviewsYet?: string;
+    beFirstReview?: string;
+    overallRating?: string;
+    ratingBreakdown?: string;
+    recentReviews?: string;
   };
   admin?: {
     sidebar?: {
@@ -339,5 +350,23 @@ export interface DictType {
     days?: string;
     guest?: string;
     guests?: string;
+  };
+  review?: {
+    title?: string;
+    subtitle?: string;
+    ratingLabel?: string;
+    commentLabel?: string;
+    commentPlaceholder?: string;
+    submit?: string;
+    update?: string;
+    success?: string;
+    error?: string;
+    bookingNotFound?: string;
+    notEligible?: string;
+    backToBookings?: string;
+    selectRating?: string;
+    optional?: string;
+    existingReviewNote?: string;
+    loading?: string;
   };
 }

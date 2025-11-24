@@ -5,17 +5,20 @@ import { Tour } from '@/app/lib/types/tourTypes';
 import { MapPin, Star, Clock, Users, CheckCircle } from 'lucide-react';
 import TourPlan from './TourPlan';
 import GoogleMap from './GoogleMap';
+import TourReviews from './TourReviews';
 import { DictType } from '@/app/lib/types';
 import { TAB_IDS, DEFAULT_VALUES } from '@/app/lib/constants';
 
 interface TourDetailTabsProps {
   tour: Tour;
   dictionary: DictType;
+  locale: 'en' | 'vi';
 }
 
 export default function TourDetailTabs({
   tour,
   dictionary,
+  locale,
 }: TourDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<
     (typeof TAB_IDS)[keyof typeof TAB_IDS]
@@ -150,6 +153,11 @@ export default function TourDetailTabs({
           </div>
         );
 
+      case TAB_IDS.REVIEWS:
+        return (
+          <TourReviews tour={tour} dictionary={dictionary} locale={locale} />
+        );
+
       default:
         return null;
     }
@@ -163,7 +171,14 @@ export default function TourDetailTabs({
     { id: TAB_IDS.TOUR_PLAN, label: tourDetailDict?.tourPlan || 'Tour Plan' },
     { id: TAB_IDS.LOCATION, label: tourDetailDict?.location || 'Location' },
     { id: TAB_IDS.GALLERY, label: tourDetailDict?.gallery || 'Gallery' },
+    { id: TAB_IDS.REVIEWS, label: reviewDictLabel() },
   ];
+
+  function reviewDictLabel() {
+    return (
+      tourDetailDict?.reviewsHeading || tourDetailDict?.reviews || 'Reviews'
+    );
+  }
 
   return (
     <>

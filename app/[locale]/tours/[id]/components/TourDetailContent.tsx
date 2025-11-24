@@ -27,7 +27,7 @@ export default async function TourDetailContent({
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2">
-          <TourDetailTabs tour={tour} dictionary={dictionary} />
+          <TourDetailTabs tour={tour} dictionary={dictionary} locale={locale} />
         </div>
 
         <div className="lg:col-span-1">

@@ -172,7 +172,11 @@
     "loadingBookings": "Loading bookings...",
     "failedToLoadBookings": "Failed to load bookings",
     "bookingDeleted": "Booking deleted successfully",
-    "bookingDeletionFailed": "Failed to delete booking"
+    "bookingDeletionFailed": "Failed to delete booking",
+    "readyToReview": "Trip completed?",
+    "reviewDescription": "Share your experience to help other travelers.",
+    "leaveReview": "Leave a Review",
+    "reviewDisabled": "Review unavailable for this tour"
   },
   "tourDetail": {
     "loginToBook": "Please login to book this tour",
@@ -206,6 +210,12 @@
     "locationDescription": "The tour covers major destinations:",
     "locationNote": "Please see the map below for main meeting points and hotel zones.",
     "gallery": "Gallery",
+    "reviewsHeading": "Guest Reviews",
+    "noReviewsYet": "No reviews yet.",
+    "beFirstReview": "Be the first to share your experience once the tour is completed.",
+    "overallRating": "Overall Rating",
+    "ratingBreakdown": "Rating Breakdown",
+    "recentReviews": "Recent Reviews",
     "mapPlaceholder": "MAP PLACEHOLDER: Google Maps Embedded View",
     "departureLocation": "Departure Location",
     "viewOnGoogleMaps": "View on Google Maps",
@@ -331,5 +341,23 @@
     "days": "days",
     "guest": "Guest",
     "guests": "Guests"
+  },
+  "review": {
+    "title": "Share Your Experience",
+    "subtitle": "Only guests who finished and paid for this tour can leave a review.",
+    "ratingLabel": "Overall Rating",
+    "commentLabel": "Review",
+    "commentPlaceholder": "Tell us about the highlights, staff, accommodations, or tips for future travelers.",
+    "submit": "Submit Review",
+    "update": "Update Review",
+    "success": "Thanks! Your review has been saved.",
+    "error": "Something went wrong. Please try again.",
+    "bookingNotFound": "We could not find this booking.",
+    "notEligible": "This booking is not eligible for reviews.",
+    "backToBookings": "Back to My Bookings",
+    "selectRating": "Please select a rating to continue.",
+    "optional": "optional",
+    "existingReviewNote": "You already submitted a review for this tour.",
+    "loading": "Loading review details..."
   }
 }

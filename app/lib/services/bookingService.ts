@@ -31,6 +31,7 @@ export interface BookingWithRelations {
     status: 'pending' | 'completed' | 'failed';
     payment_method: string;
   } | null;
+  userReviewSubmitted?: boolean;
 }
 
 export const fetchBookings = async (): Promise<BookingWithRelations[]> => {
@@ -91,6 +92,7 @@ export const fetchBookings = async (): Promise<BookingWithRelations[]> => {
           duration_days: booking.tour.duration_days,
         },
         payment: booking.payment,
+        userReviewSubmitted: undefined,
       })
     );
 
@@ -105,41 +107,55 @@ export const fetchUserBookings = async (
   userId: number
 ): Promise<BookingWithRelations[]> => {
   try {
-    const bookings = await prisma.booking.findMany({
-      where: {
-        user_id: userId,
-      },
-      include: {
-        user: {
-          select: {
-            user_id: true,
-            full_name: true,
-            email: true,
-            avatar_url: true,
+    const [bookings, userReviews] = await Promise.all([
+      prisma.booking.findMany({
+        where: {
+          user_id: userId,
+        },
+        include: {
+          user: {
+            select: {
+              user_id: true,
+              full_name: true,
+              email: true,
+              avatar_url: true,
+            },
+          },
+          tour: {
+            select: {
+              tour_id: true,
+              title: true,
+              cover_image_url: true,
+              start_date: true,
+              price_per_person: true,
+              duration_days: true,
+            },
+          },
+          payment: {
+            select: {
+              payment_id: true,
+              status: true,
+              payment_method: true,
+            },
           },
         },
-        tour: {
-          select: {
-            tour_id: true,
-            title: true,
-            cover_image_url: true,
-            start_date: true,
-            price_per_person: true,
-            duration_days: true,
-          },
+        orderBy: {
+          created_at: 'desc',
         },
-        payment: {
-          select: {
-            payment_id: true,
-            status: true,
-            payment_method: true,
-          },
+      }),
+      prisma.review.findMany({
+        where: {
+          user_id: userId,
         },
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
+        select: {
+          tour_id: true,
+        },
+      }),
+    ]);
+
+    const reviewedTourIds = new Set(
+      userReviews.map((review) => review.tour_id)
+    );
 
     const transformedBookings: BookingWithRelations[] = bookings.map(
       (booking) => ({
@@ -164,6 +180,7 @@ export const fetchUserBookings = async (
           duration_days: booking.tour.duration_days,
         },
         payment: booking.payment,
+        userReviewSubmitted: reviewedTourIds.has(booking.tour_id),
       })
     );
 

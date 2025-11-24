@@ -283,6 +283,7 @@ export const TAB_IDS = {
   TOUR_PLAN: 'tourplan',
   LOCATION: 'location',
   GALLERY: 'gallery',
+  REVIEWS: 'reviews',
 } as const;
 
 // Default values
@@ -480,6 +481,10 @@ export const USER_PROFILE_CONSTANTS = {
   BOOKING_CANCELLED: 'Booking cancelled successfully',
   BOOKING_CANCELLATION_FAILED: 'Failed to cancel booking',
   CANCELLING: 'Cancelling...',
+  READY_TO_REVIEW: 'Trip completed?',
+  REVIEW_DESCRIPTION: 'Share your experience to help other travelers.',
+  LEAVE_REVIEW: 'Leave a Review',
+  REVIEW_DISABLED: 'Review unavailable for this tour',
   PROFILE_UPDATED: 'Profile updated successfully',
   PROFILE_UPDATE_FAILED: 'Failed to update profile',
   SAVING: 'Saving...',
@@ -537,6 +542,26 @@ export const PAYMENT_CONSTANTS = {
   GUESTS: 'Guests',
 } as const;
 
+export const REVIEW_CONSTANTS = {
+  DAYS: 'days',
+  TITLE: 'Share Your Experience',
+  SUBTITLE: 'Your feedback helps other travelers choose the right trip.',
+  RATING_LABEL: 'Overall Rating',
+  COMMENT_LABEL: 'Write a review',
+  COMMENT_PLACEHOLDER:
+    'What did you enjoy? What could be improved? Share tips for future travelers.',
+  SUBMIT: 'Submit Review',
+  UPDATE: 'Update Review',
+  SUCCESS: 'Thank you! Your review has been submitted.',
+  ERROR: 'Unable to submit review. Please try again.',
+  NOT_ELIGIBLE: 'You are not eligible to review this tour.',
+  BOOKING_NOT_FOUND: 'Booking not found.',
+  SELECT_RATING: 'Please select a rating.',
+  OPTIONAL: 'Optional',
+  BACK_TO_BOOKINGS: 'Back to my bookings',
+  PROCESSING: 'Submitting...',
+} as const;
+
 // Locale Constants
 export const LOCALE_CODES = {
   VIETNAMESE: 'vi-VN',
@@ -547,6 +572,7 @@ export const LOCALE_CODES = {
 export const PLACEHOLDER_IMAGE_URLS = {
   TOUR: 'https://placehold.co/100x100/1e40af/ffffff?text=Tour',
   QR_CODE: 'https://placehold.co/180x180/000000/ffffff?text=QR+CODE',
+  USER: 'https://placehold.co/64x64/1e293b/ffffff?text=U',
 } as const;
 
 // Payment Method Constants
