@@ -1,7 +1,7 @@
+import RenderCopyright from '@/app/components/common/RenderCopyright';
+import { FOOTER_CONSTANTS } from '@/app/lib/constants';
+import { DictType } from '@/app/lib/types';
 import Link from 'next/link';
-import { DictType } from '../lib/types/dictType';
-import { FOOTER_CONSTANTS } from '../lib/constants';
-import Copyright from '../components/common/RenderCopyright';
 
 interface RenderFooterProps {
   dictionary: DictType;
@@ -95,7 +95,7 @@ export default function RenderFooter({ dictionary }: RenderFooterProps) {
             </div>
           </div>
         </div>
-        <Copyright
+        <RenderCopyright
           copyright={footerDict?.copyright || FOOTER_CONSTANTS.COPYRIGHT}
         />
       </div>

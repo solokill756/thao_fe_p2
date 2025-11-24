@@ -11,7 +11,8 @@ import {
   HEADER_AUTH_SECTION_CONSTANTS,
   AUTH_CONFIG,
 } from '@/app/lib/constants';
-import Loading from './Loading';
+import { useUserProfileStore } from '@/app/lib/stores/userProfileStore';
+import { useEffect } from 'react';
 
 interface HeaderAuthSectionProps {
   locale: 'en' | 'vi';
@@ -22,13 +23,31 @@ export default function HeaderAuthSection({
   locale,
   dictionary,
 }: HeaderAuthSectionProps) {
-  const { data: session } = useSession();
   const { push, isPending, refresh } = useNavigationLoading();
   const headerDict = dictionary.common?.header;
-
+  const { data: session } = useSession();
+  const {
+    name: storeName,
+    image: storeImage,
+    email: storeEmail,
+    clearUser,
+    setUser,
+  } = useUserProfileStore();
   const handleLogin = () => {
     push(`/${locale}/auth`);
   };
+
+  useEffect(() => {
+    if (session?.user) {
+      setUser({
+        name: session.user.name,
+        email: session.user.email,
+        image: session.user.image,
+      });
+    } else {
+      clearUser();
+    }
+  }, [session?.user, setUser, clearUser]);
 
   const handleLogout = async () => {
     try {
@@ -36,9 +55,7 @@ export default function HeaderAuthSection({
         redirect: false,
         callbackUrl: `/${locale}/`,
       });
-      // Clear any client-side session data
       if (typeof window !== 'undefined') {
-        // Clear NextAuth session cookies
         document.cookie.split(';').forEach((cookie) => {
           const eqPos = cookie.indexOf('=');
           const name =
@@ -47,11 +64,10 @@ export default function HeaderAuthSection({
             document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
           }
         });
-        // Clear localStorage/sessionStorage if used
         localStorage.removeItem(AUTH_CONFIG.SESSION_COOKIE_NAME);
         sessionStorage.clear();
       }
-      // Navigate to home page and refresh to ensure clean state
+      clearUser();
       push(`/${locale}/`);
       refresh();
       toast.success(
@@ -72,7 +88,7 @@ export default function HeaderAuthSection({
   };
 
   const handleProfileRedirect = () => {
-    push(`/${locale}/user/home`);
+    push(`/${locale}/user/profile`);
   };
 
   return (
@@ -81,31 +97,30 @@ export default function HeaderAuthSection({
         {headerDict?.getInTouch || HEADER_AUTH_SECTION_CONSTANTS.GET_IN_TOUCH}
       </button>
 
-      {session?.user ? (
+      {storeName ? (
         <div className="flex items-center space-x-3">
           <div
             className="flex items-center space-x-2 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition"
             onClick={handleProfileRedirect}
           >
-            {session.user.image ? (
+            {storeImage ? (
               <Image
                 width={32}
                 height={32}
-                src={session.user.image}
+                src={storeImage}
                 alt="User Avatar"
                 className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
               />
             ) : (
               <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold border-2 border-blue-500">
-                {session.user.name?.charAt(0).toUpperCase() || 'U'}
+                {storeName?.charAt(0).toUpperCase() || 'U'}
               </div>
             )}
             <span className="hidden md:inline-block text-sm font-semibold text-gray-800">
-              {session.user.name}
+              {storeName}
             </span>
           </div>
 
-          {/* Nút Logout */}
           <button
             onClick={handleLogout}
             className="p-2 text-gray-600 hover:text-red-500 transition duration-150 rounded-full hover:bg-gray-100"

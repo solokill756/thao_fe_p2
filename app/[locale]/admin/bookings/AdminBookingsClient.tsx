@@ -4,7 +4,11 @@ import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import type { DictType } from '@/app/lib/types/dictType';
 import type { BookingWithRelations } from '@/app/actions/admin/getBookingsAction';
-import { ADMIN_BOOKINGS_CONSTANTS, LOCALE_STRINGS } from '@/app/lib/constants';
+import {
+  ADMIN_BOOKINGS_CONSTANTS,
+  ERROR_MESSAGES,
+  LOCALE_STRINGS,
+} from '@/app/lib/constants';
 import { useBookings } from '@/app/lib/hooks/useBookings';
 import { useUpdateBookingStatus } from '@/app/lib/hooks/useUpdateBookingStatus';
 import AdminHeader from './components/AdminHeader';
@@ -27,13 +31,6 @@ export default function AdminBookingsClient({
   const { data: session } = useSession();
   const { push } = useNavigationLoading();
 
-  class UnauthenticatedError extends Error {
-    constructor(message: string) {
-      super(message);
-      this.name = 'UnauthenticatedError';
-    }
-  }
-
   const isSessionValid = () => {
     if (!session) return false;
 
@@ -44,14 +41,6 @@ export default function AdminBookingsClient({
     );
   };
 
-  const checkRequireAuth = <T extends (...args: any[]) => any>(fn: T) => {
-    return (...args: Parameters<T>): ReturnType<T> => {
-      if (!isSessionValid()) {
-        throw new UnauthenticatedError('Unauthenticated sensitive action');
-      }
-      return fn(...args);
-    };
-  };
   const [filterStatus, setFilterStatus] = useState<
     'All' | 'pending' | 'confirmed' | 'cancelled'
   >('All');
@@ -67,11 +56,23 @@ export default function AdminBookingsClient({
 
   const updateBookingStatusMutation = useUpdateBookingStatus();
 
-  // Handle status change
+  if (!isSessionValid()) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-red-600">{ERROR_MESSAGES.UNAUTHORIZED}</div>
+      </div>
+    );
+  }
+
   const handleStatusChange = async (
     bookingId: number,
     newStatus: 'pending' | 'confirmed' | 'cancelled'
   ) => {
+    if (!isSessionValid()) {
+      toast.error(ERROR_MESSAGES.UNAUTHORIZED);
+      return;
+    }
+
     try {
       const result = await updateBookingStatusMutation.mutateAsync({
         bookingId,
@@ -146,33 +147,33 @@ export default function AdminBookingsClient({
     return hasDateInstance.toLocaleDateString(localeString);
   };
 
-  const formatPaymentStatus = checkRequireAuth(
-    (payment: BookingWithRelations['payment']) => {
-      if (!payment) return adminDict.unpaid || ADMIN_BOOKINGS_CONSTANTS.UNPAID;
+  const formatPaymentStatus = (
+    payment: BookingWithRelations['payment']
+  ): string => {
+    if (!payment) return adminDict.unpaid || ADMIN_BOOKINGS_CONSTANTS.UNPAID;
 
-      if (payment.status === 'completed') {
-        const method =
-          payment.payment_method === 'internet_banking'
-            ? adminDict.banking || ADMIN_BOOKINGS_CONSTANTS.BANKING
-            : adminDict.creditCard || ADMIN_BOOKINGS_CONSTANTS.CREDIT_CARD;
+    if (payment.status === 'completed') {
+      const method =
+        payment.payment_method === 'internet_banking'
+          ? adminDict.banking || ADMIN_BOOKINGS_CONSTANTS.BANKING
+          : adminDict.creditCard || ADMIN_BOOKINGS_CONSTANTS.CREDIT_CARD;
 
-        return `${adminDict.paid || ADMIN_BOOKINGS_CONSTANTS.PAID} (${method})`;
-      }
-
-      if (payment.status === 'failed')
-        return adminDict.failed || ADMIN_BOOKINGS_CONSTANTS.FAILED;
-
-      return adminDict.pending || ADMIN_BOOKINGS_CONSTANTS.PENDING;
+      return `${adminDict.paid || ADMIN_BOOKINGS_CONSTANTS.PAID} (${method})`;
     }
-  );
 
-  const getPaymentStatusColor = checkRequireAuth(
-    (payment: BookingWithRelations['payment']) => {
-      if (!payment || payment.status === 'pending') return 'text-red-500';
-      if (payment.status === 'completed') return 'text-green-600';
-      return 'text-red-500';
-    }
-  );
+    if (payment.status === 'failed')
+      return adminDict.failed || ADMIN_BOOKINGS_CONSTANTS.FAILED;
+
+    return adminDict.pending || ADMIN_BOOKINGS_CONSTANTS.PENDING;
+  };
+
+  const getPaymentStatusColor = (
+    payment: BookingWithRelations['payment']
+  ): string => {
+    if (!payment || payment.status === 'pending') return 'text-red-500';
+    if (payment.status === 'completed') return 'text-green-600';
+    return 'text-red-500';
+  };
 
   if (loading) {
     return (

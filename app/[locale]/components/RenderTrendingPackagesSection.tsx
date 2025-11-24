@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import { FaStar } from 'react-icons/fa';
-import { DictType } from '../lib/types/dictType';
-import { TRENDING_PACKAGES_SECTION_CONSTANTS } from '../lib/constants';
-import { getTrendingTours } from '../lib/services/tourService.server';
-import type { TrendingTour } from '../lib/types/tourTypes';
-import TourBookingButton from '../components/common/TourBookingButton';
+import { DictType } from '../../lib/types/dictType';
+import { TRENDING_PACKAGES_SECTION_CONSTANTS } from '../../lib/constants';
+import { getTrendingTours } from '../../lib/services/tourService.server';
+import type { TrendingTour } from '../../lib/types/tourTypes';
+import TourBookingButton from '../../components/common/TourBookingButton';
 
 interface RenderTrendingPackagesSectionProps {
   dictionary: DictType;

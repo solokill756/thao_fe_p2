@@ -1,6 +1,6 @@
+import { SERVICES_SECTION_CONSTANTS } from '@/app/lib/constants';
+import { DictType } from '@/app/lib/types';
 import { Compass, Heart, MapPin, TrendingUp } from 'lucide-react';
-import { DictType } from '../lib/types/dictType';
-import { SERVICES_SECTION_CONSTANTS } from '../lib/constants';
 
 interface RenderServicesSectionProps {
   dictionary: DictType;

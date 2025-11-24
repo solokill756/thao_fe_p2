@@ -313,6 +313,10 @@ export const ERROR_MESSAGES = {
   UNABLE_TO_LOAD_MAP: 'Unable to load map',
   NO_LOCATION_INFO: 'No location information available',
   UNAUTHORIZED: 'Unauthorized',
+  VALIDATION_FAILED: 'Validation failed',
+  PROFILE_UPDATED: 'Profile updated successfully',
+  PROFILE_UPDATE_FAILED: 'Failed to update profile',
+  UNKNOWN_ERROR: 'Unknown error',
 } as const;
 
 // Google Maps
@@ -434,4 +438,127 @@ export const ADMIN_BOOKINGS_CONSTANTS = {
   BOOKING_HAS_BEEN: 'Booking {id} has been {status}!',
   FAILED_TO_UPDATE: 'Failed to update booking status',
   FAILED_TO_LOAD_BOOKINGS: 'Failed to load bookings',
+} as const;
+
+// User Profile Constants
+export const USER_PROFILE_CONSTANTS = {
+  MY_BOOKINGS: 'My Bookings',
+  PROFILE_SETTINGS: 'Profile Settings',
+  PERSONAL_INFORMATION: 'Personal Information',
+  FULL_NAME: 'Full Name',
+  EMAIL_ADDRESS: 'Email Address',
+  PHONE_NUMBER: 'Phone Number',
+  ADDRESS: 'Address',
+  SAVE_CHANGES: 'Save Changes',
+  MEMBER_SINCE: 'Member since',
+  ITEMS: 'items',
+  ALL: 'All',
+  PENDING: 'Pending',
+  CONFIRMED: 'Confirmed',
+  CANCELLED: 'Cancelled',
+  BOOKING_ID: 'Booking ID',
+  START: 'Start',
+  GUEST: 'Guest',
+  GUESTS: 'Guests',
+  DETAILS: 'Details',
+  CANCEL: 'Cancel',
+  NO_BOOKINGS: 'No bookings found',
+  LOADING_BOOKINGS: 'Loading bookings...',
+  FAILED_TO_LOAD_BOOKINGS: 'Failed to load bookings',
+  LOGOUT: 'Log Out',
+  LOGOUT_SUCCESS: 'Logged out successfully!',
+  LOGOUT_FAILED: 'Logout failed',
+  PLEASE_LOGIN: 'Please login to view your profile',
+  GO_TO_LOGIN: 'Go to Login',
+  USER: 'User',
+  TOUR: 'Tour',
+  UNKNOWN_TOUR: 'Unknown Tour',
+  PHONE_PLACEHOLDER: '+84 123 456 789',
+  ADDRESS_PLACEHOLDER: 'Ho Chi Minh City, Vietnam',
+  BOOKING_DELETED: 'Booking deleted successfully',
+  BOOKING_DELETION_FAILED: 'Failed to delete booking',
+  BOOKING_CANCELLED: 'Booking cancelled successfully',
+  BOOKING_CANCELLATION_FAILED: 'Failed to cancel booking',
+  CANCELLING: 'Cancelling...',
+  PROFILE_UPDATED: 'Profile updated successfully',
+  PROFILE_UPDATE_FAILED: 'Failed to update profile',
+  SAVING: 'Saving...',
+  EMAIL_CANNOT_BE_CHANGED: 'Email cannot be changed',
+  FULL_NAME_TOO_SHORT: 'Full name must be at least 2 characters',
+  FULL_NAME_TOO_LONG: 'Full name must be less than 100 characters',
+  PHONE_NUMBER_TOO_LONG: 'Phone number must be less than 20 characters',
+  PAY_NOW: 'Pay Now',
+} as const;
+
+// Payment Constants
+export const PAYMENT_CONSTANTS = {
+  BACK: 'Back',
+  HAS_PAID: 'Has Paid',
+  PAYMENT: 'Payment',
+  CONFIRM_AND_PAY: 'Confirm and Pay',
+  PAYMENT_SUCCESSFUL: 'Payment Successful!',
+  PAYMENT_FAILED: 'Payment Failed',
+  PROCESSING: 'Processing...',
+  PAYMENT_METHOD: 'Payment Method',
+  PAY_WITH: 'Pay with',
+  CREDIT_DEBIT_CARD: 'Credit/Debit Card',
+  INTERNET_BANKING: 'Internet Banking',
+  CARD_NUMBER: 'Card Number',
+  EXPIRATION: 'Expiration',
+  CVC: 'CVC',
+  SCAN_QR_CODE: 'Scan QR Code to Pay via Banking App',
+  SUPPORTED_BANKS: 'Supported Banks: Vietcombank, Techcombank, ACB...',
+  PAYMENTS_SECURE: 'Payments are secure and encrypted.',
+  YOUR_TRIP: 'Your Trip',
+  DATES: 'Dates',
+  PRICE_DETAILS: 'Price Details',
+  TAXES_FEES: 'Taxes & Fees',
+  TOTAL: 'Total',
+  FREE_CANCELLATION: 'Free Cancellation',
+  FREE_CANCELLATION_DESC:
+    'up to 48 hours before the trip. Book now to secure your spot!',
+  GO_TO_MY_BOOKINGS: 'Go to My Bookings',
+  BACK_TO_HOME: 'Back to Home',
+  BACK_TO_TOUR_DETAILS: 'Back to Tour Details',
+  TOUR_PACKAGE: 'Tour Package',
+  PAYMENT_SUCCESS_MESSAGE:
+    'Thank you for your booking. Your tour has been confirmed.',
+  PAYMENT_PROCESSING: 'Processing payment...',
+  PAYMENT_ERROR:
+    'An error occurred while processing your payment. Please try again.',
+  BOOKING_NOT_FOUND: 'Booking not found',
+  BOOKING_NOT_CONFIRMED: 'Booking is not confirmed',
+  PAYMENT_ALREADY_COMPLETED: 'Payment already completed',
+  LOADING: 'Loading...',
+  CARD_DATA_REQUIRED: 'Please fill in all card details',
+  DAY: 'day',
+  DAYS: 'days',
+  GUEST: 'Guest',
+  GUESTS: 'Guests',
+} as const;
+
+// Locale Constants
+export const LOCALE_CODES = {
+  VIETNAMESE: 'vi-VN',
+  ENGLISH: 'en-US',
+} as const;
+
+// Placeholder Image URLs
+export const PLACEHOLDER_IMAGE_URLS = {
+  TOUR: 'https://placehold.co/100x100/1e40af/ffffff?text=Tour',
+  QR_CODE: 'https://placehold.co/180x180/000000/ffffff?text=QR+CODE',
+} as const;
+
+// Payment Method Constants
+export const PAYMENT_METHODS = {
+  CARD: 'card',
+  INTERNET_BANKING: 'internet_banking',
+} as const;
+
+// Booking Status Color Classes
+export const BOOKING_STATUS_COLORS = {
+  CONFIRMED: 'text-green-600 bg-green-50 border-green-200',
+  PENDING: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+  CANCELLED: 'text-red-600 bg-red-50 border-red-200',
+  DEFAULT: 'text-gray-600 bg-gray-50 border-gray-200',
 } as const;

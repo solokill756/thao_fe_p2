@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { DictType } from '../lib/types/dictType';
-import HeaderAuthSection from '../components/common/HeaderAuthSection';
+import { DictType } from '../../lib/types/dictType';
+import HeaderAuthSection from './HeaderAuthSection';
 
 const HEADER_CONTENT = [
   {

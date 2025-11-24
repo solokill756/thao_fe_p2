@@ -65,3 +65,43 @@ export const createUserFromGoogle = async (
     throw new Error(String(error));
   }
 };
+
+export const getUserById = async (userId: number) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { user_id: userId },
+    });
+    return user;
+  } catch (error) {
+    console.error(`Error fetching user with id ${userId}:`, error);
+    throw error;
+  }
+};
+
+export const updateUser = async (
+  userId: number,
+  data: {
+    full_name?: string;
+    phone_number?: string | null;
+  }
+) => {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { user_id: userId },
+      data: {
+        ...(data.full_name && { full_name: data.full_name }),
+        ...(data.phone_number !== undefined && {
+          phone_number: data.phone_number || null,
+        }),
+        updated_at: new Date(),
+      },
+    });
+    return updatedUser;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(String(error));
+  }
+};

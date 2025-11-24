@@ -1,11 +1,10 @@
-import Image from 'next/image';
-import { DictType } from '../lib/types/dictType';
+import { findTourAction } from '@/app/actions/home/findTourAction';
+import SubmitButton from '@/app/components/common/SubmitButton';
+import { HERO_SECTION_CONSTANTS, IMAGE_DIMENSIONS } from '@/app/lib/constants';
+import { getDestinations } from '@/app/lib/services/destinationService.server';
+import { Destination, DictType } from '@/app/lib/types';
 import { MapPin, Search } from 'lucide-react';
-import { HERO_SECTION_CONSTANTS, IMAGE_DIMENSIONS } from '../lib/constants';
-import type { Destination } from '../lib/types/tourTypes';
-import { findTourAction } from '../actions/home/findTourAction';
-import { getDestinations } from '../lib/services/destinationService.server';
-import SubmitButton from '../components/common/SubmitButton';
+import Image from 'next/image';
 
 interface RenderHeroSectionProps {
   dictionary: DictType;
@@ -55,7 +54,7 @@ export default async function RenderHeroSection({
                 <option value="" disabled>
                   {HERO_SECTION_CONSTANTS.WHERE_TO_PLACEHOLDER}
                 </option>
-                {destinations.map((destination) => (
+                {destinations.map((destination: Destination) => (
                   <option
                     key={destination.destination_id}
                     value={destination.destination_id}

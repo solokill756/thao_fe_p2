@@ -24,12 +24,10 @@ export default function LayoutContent({
   const isAdminRoute = pathname?.includes('/admin');
   const isAuthRoute = pathname?.includes('/auth');
 
-  // Render only children for admin and auth routes
   if (isAdminRoute || isAuthRoute || !shouldShowLayout) {
     return <>{children}</>;
   }
 
-  // Render full layout with header and footer
   return (
     <div className="min-h-screen bg-white font-inter flex flex-col">
       <header className="border-b border-gray-200 bg-white">
