@@ -112,7 +112,7 @@ export const AUTH_LOGIN_CONSTANTS = {
   SIGNING_IN: 'Signing in...',
   SIGN_IN: 'Sign In',
   USER_HOME_PATH: '/user/home',
-  ADMIN_HOME_PATH: '/admin/bookings',
+  ADMIN_HOME_PATH: '/admin/dashboard',
   LOGIN_ERROR_PREFIX: 'Login error:',
   LOGIN_FAILED_MESSAGE: 'Login failed',
 } as const;

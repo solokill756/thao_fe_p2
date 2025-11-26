@@ -60,7 +60,7 @@ export const useUpdateBookingStatus = () => {
         if (context?.previousBookings) {
           queryClient.setQueryData(['bookings'], context.previousBookings);
         }
-        toast.error(result.error || 'Failed to update booking status');
+        toast.error(result.message || 'Failed to update booking status');
       }
     },
     onError: (error, _variables, context) => {

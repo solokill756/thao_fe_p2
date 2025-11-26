@@ -70,7 +70,8 @@ export default function TourReviews({
   }
 
   const breakdownEntries = [5, 4, 3, 2, 1].map((rating) => {
-    const count = ratingBreakdown[rating as keyof typeof ratingBreakdown];
+    const count =
+      ratingBreakdown?.[rating as keyof typeof ratingBreakdown] ?? 0;
     const percent = totalReviews ? Math.round((count / totalReviews) * 100) : 0;
     return { rating, count, percent };
   });

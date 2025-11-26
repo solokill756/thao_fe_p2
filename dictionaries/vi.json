@@ -493,7 +493,21 @@
     "day": "ngày",
     "days": "ngày",
     "guest": "Khách",
-    "guests": "Khách"
+    "guests": "Khách",
+    "validation": {
+      "bookingIdMustBeNumber": "Mã đặt tour phải là số",
+      "bookingIdMustBeInteger": "Mã đặt tour phải là số nguyên",
+      "bookingIdMustBePositive": "Mã đặt tour phải là số dương",
+      "paymentMethodInvalid": "Phương thức thanh toán không hợp lệ",
+      "cardNumberRequired": "Số thẻ là bắt buộc",
+      "cardNumberInvalid": "Số thẻ phải có 13-19 chữ số",
+      "expirationRequired": "Ngày hết hạn là bắt buộc",
+      "expirationInvalid": "Ngày hết hạn phải có định dạng MM/YY",
+      "cvcRequired": "CVC là bắt buộc",
+      "cvcInvalid": "CVC phải có 3-4 chữ số",
+      "cardDataRequired": "Vui lòng điền đầy đủ thông tin thẻ",
+      "validationFailed": "Xác thực thất bại"
+    }
   },
   "review": {
     "title": "Chia Sẻ Trải Nghiệm Của Bạn",

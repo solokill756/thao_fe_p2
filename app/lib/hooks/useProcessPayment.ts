@@ -22,7 +22,7 @@ export function useProcessPayment() {
         params.cardData
       );
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['userBookings'] });
     },
   });

@@ -497,6 +497,20 @@ export interface DictType {
     days?: string;
     guest?: string;
     guests?: string;
+    validation?: {
+      bookingIdMustBeNumber?: string;
+      bookingIdMustBeInteger?: string;
+      bookingIdMustBePositive?: string;
+      paymentMethodInvalid?: string;
+      cardNumberRequired?: string;
+      cardNumberInvalid?: string;
+      expirationRequired?: string;
+      expirationInvalid?: string;
+      cvcRequired?: string;
+      cvcInvalid?: string;
+      cardDataRequired?: string;
+      validationFailed?: string;
+    };
   };
   review?: {
     title?: string;

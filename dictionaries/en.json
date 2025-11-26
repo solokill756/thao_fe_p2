@@ -487,7 +487,21 @@
     "day": "day",
     "days": "days",
     "guest": "Guest",
-    "guests": "Guests"
+    "guests": "Guests",
+    "validation": {
+      "bookingIdMustBeNumber": "Booking ID must be a number",
+      "bookingIdMustBeInteger": "Booking ID must be an integer",
+      "bookingIdMustBePositive": "Booking ID must be positive",
+      "paymentMethodInvalid": "Invalid payment method",
+      "cardNumberRequired": "Card number is required",
+      "cardNumberInvalid": "Card number must be 13-19 digits",
+      "expirationRequired": "Expiration date is required",
+      "expirationInvalid": "Expiration must be in MM/YY format",
+      "cvcRequired": "CVC is required",
+      "cvcInvalid": "CVC must be 3-4 digits",
+      "cardDataRequired": "Please fill in all card details",
+      "validationFailed": "Validation failed"
+    }
   },
   "review": {
     "title": "Share Your Experience",
