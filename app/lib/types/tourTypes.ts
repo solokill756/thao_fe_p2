@@ -88,7 +88,7 @@ export interface Tour extends TourBase {
     reviews: number;
   };
   averageRating: number;
-  ratingBreakdown: RatingBreakdown;
+  ratingBreakdown: RatingBreakdown | null;
 }
 
 export interface TrendingTour extends TourBase {
@@ -101,7 +101,7 @@ export interface TrendingTour extends TourBase {
     reviews: number;
   };
   averageRating: number;
-  ratingBreakdown: RatingBreakdown;
+  ratingBreakdown: RatingBreakdown | null;
 }
 
 export interface ToursResponse {
@@ -128,4 +128,38 @@ export interface UseTrendingToursOptions {
 
 export interface UseCategoriesOptions {
   enabled?: boolean;
+}
+
+export interface GalleryItem {
+  id: string;
+  url: string | null;
+  preview: string;
+  uploading: boolean;
+}
+export interface TourWithRelations {
+  tour_id: number;
+  title: string;
+  description: string;
+  price_per_person: number;
+  duration_days: number;
+  max_guests: number;
+  cover_image_url: string | null;
+  departure_location: string | null;
+  departure_time: Date | string | null;
+  return_time: Date | string | null;
+  start_date: Date | null;
+  what_included: JsonValue | null;
+  what_not_included: JsonValue | null;
+  created_at: Date | null;
+  updated_at: Date | null;
+  categories: TourCategoryRelation[];
+  destinations: TourDestinationRelation[];
+  gallery?: TourGallery[];
+  plans?: TourPlan[];
+  _count: {
+    bookings: number;
+    reviews: number;
+  };
+  averageRating?: number;
+  ratingBreakdown?: RatingBreakdown | null;
 }

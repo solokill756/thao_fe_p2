@@ -176,9 +176,7 @@ export default function BookingItem({
           <div className="flex items-center">
             <Calendar className="w-4 h-4 mr-2 text-blue-500" />{' '}
             {tourDict.departureDate || USER_PROFILE_CONSTANTS.START}:{' '}
-            {booking.tour?.start_date
-              ? formatDate(booking.tour.start_date)
-              : formatDate(booking.booking_date)}
+            {formatDate(booking.booking_date)}
           </div>
           <div className="flex items-center">
             <User className="w-4 h-4 mr-2 text-blue-500" /> {booking.num_guests}{' '}
@@ -223,6 +221,14 @@ export default function BookingItem({
             className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium transition w-full md:w-auto"
           >
             {profileDict.leaveReview || USER_PROFILE_CONSTANTS.LEAVE_REVIEW}
+          </Link>
+        )}
+        {reviewLink && booking.userReviewSubmitted && (
+          <Link
+            href={reviewLink}
+            className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium transition w-full md:w-auto"
+          >
+            {profileDict.viewReview || USER_PROFILE_CONSTANTS.VIEW_REVIEW}
           </Link>
         )}
       </div>

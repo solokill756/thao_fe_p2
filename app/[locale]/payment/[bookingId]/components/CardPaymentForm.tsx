@@ -44,6 +44,7 @@ export default function CardPaymentForm({
             }
             maxLength={16}
             className="w-full p-3 border border-gray-300 rounded-lg pl-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            autoComplete="cc-number"
             required
           />
           <CreditCard className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
@@ -68,6 +69,7 @@ export default function CardPaymentForm({
             }
             maxLength={5}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            autoComplete="cc-exp"
             required
           />
         </div>
@@ -87,6 +89,7 @@ export default function CardPaymentForm({
             }
             maxLength={4}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            autoComplete="cc-csc"
             required
           />
         </div>

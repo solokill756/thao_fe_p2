@@ -19,7 +19,7 @@ export default function PaymentHeader({
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link
-          href={`/${locale}/user/profile`}
+          href={`/${locale}/profile`}
           className="flex items-center cursor-pointer text-gray-600 hover:text-blue-600 transition"
         >
           <ChevronLeft className="w-5 h-5 mr-1" />

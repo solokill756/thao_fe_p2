@@ -22,11 +22,13 @@ import { useNavigationLoading } from '@/app/lib/hooks/useNavigationLoading';
 interface AdminBookingsClientProps {
   locale: 'en' | 'vi';
   dictionary: DictType;
+  initialBookings: BookingWithRelations[];
 }
 
 export default function AdminBookingsClient({
   locale,
   dictionary,
+  initialBookings,
 }: AdminBookingsClientProps) {
   const { data: session } = useSession();
   const { push } = useNavigationLoading();
@@ -52,7 +54,7 @@ export default function AdminBookingsClient({
     isLoading: loading,
     error,
     refetch,
-  } = useBookings();
+  } = useBookings(initialBookings);
 
   const updateBookingStatusMutation = useUpdateBookingStatus();
 
@@ -61,6 +63,29 @@ export default function AdminBookingsClient({
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-red-600">{ERROR_MESSAGES.UNAUTHORIZED}</div>
       </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-500">
+          {adminDict.loadingBookings ||
+            ADMIN_BOOKINGS_CONSTANTS.LOADING_BOOKINGS}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorRetry
+        message={
+          adminDict.failedToLoadBookings ||
+          ADMIN_BOOKINGS_CONSTANTS.FAILED_TO_LOAD_BOOKINGS
+        }
+        onRetry={refetch}
+      />
     );
   }
 
@@ -174,29 +199,6 @@ export default function AdminBookingsClient({
     if (payment.status === 'completed') return 'text-green-600';
     return 'text-red-500';
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-slate-500">
-          {adminDict.loadingBookings ||
-            ADMIN_BOOKINGS_CONSTANTS.LOADING_BOOKINGS}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <ErrorRetry
-        message={
-          adminDict.failedToLoadBookings ||
-          ADMIN_BOOKINGS_CONSTANTS.FAILED_TO_LOAD_BOOKINGS
-        }
-        onRetry={refetch}
-      />
-    );
-  }
 
   return (
     <>

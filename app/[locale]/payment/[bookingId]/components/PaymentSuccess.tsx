@@ -34,7 +34,7 @@ export default function PaymentSuccess({
 
         <div className="space-y-3">
           <button
-            onClick={() => router.push(`/${locale}/user/profile`)}
+            onClick={() => router.push(`/${locale}/profile`)}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition shadow-md"
           >
             {paymentDict.goToMyBookings ||

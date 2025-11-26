@@ -9,6 +9,7 @@ interface UseBookingsOptions {
 }
 
 export const useBookings = (
+  initialBookings: BookingWithRelations[],
   options: UseBookingsOptions = {},
   queryOptions?: Omit<
     UseQueryOptions<BookingWithRelations[], Error>,
@@ -18,6 +19,7 @@ export const useBookings = (
   const { enabled = true } = options;
 
   return useQuery<BookingWithRelations[], Error>({
+    initialData: initialBookings,
     queryKey: ['bookings'],
     queryFn: async (): Promise<BookingWithRelations[]> => {
       const result = await getBookingsAction();

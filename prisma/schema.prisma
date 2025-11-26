@@ -8,7 +8,199 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-// Định nghĩa các ENUMs
+model User {
+  email         String       @unique @db.VarChar(100)
+  auth_provider AuthProvider @default(local)
+  avatar_url    String?      @db.VarChar(255)
+  created_at    DateTime?    @default(now())
+  full_name     String       @db.VarChar(100)
+  password_hash String?      @db.VarChar(255)
+  phone_number  String?      @db.VarChar(20)
+  provider_id   String?      @db.VarChar(255)
+  updated_at    DateTime?    @default(now()) @updatedAt
+  user_id       Int          @id @default(autoincrement())
+  role          Role         @default(user)
+  bookings      Booking[]
+  comments      Comment[]
+  review_likes  ReviewLike[]
+  reviews       Review[]
+
+  @@map("users")
+}
+
+model Category {
+  category_id Int            @id @default(autoincrement())
+  name        String         @unique @db.VarChar(100)
+  description String?
+  created_at  DateTime?      @default(now())
+  tours       TourCategory[]
+
+  @@map("categories")
+}
+
+model Destination {
+  destination_id Int               @id @default(autoincrement())
+  name           String            @unique @db.VarChar(100)
+  country        String?           @db.VarChar(100)
+  image_url      String?           @db.VarChar(255)
+  description    String?
+  tours          TourDestination[]
+
+  @@map("destinations")
+}
+
+model Tour {
+  tour_id            Int               @id @default(autoincrement())
+  title              String            @db.VarChar(255)
+  description        String
+  price_per_person   Decimal           @db.Decimal(10, 2)
+  duration_days      Int
+  max_guests         Int
+  cover_image_url    String?           @db.VarChar(255)
+  departure_location String?           @db.VarChar(255)
+  departure_time     DateTime?         @db.Time(6)
+  return_time        DateTime?         @db.Time(6)
+  what_included      Json?
+  what_not_included  Json?
+  created_at         DateTime?         @default(now())
+  updated_at         DateTime?         @default(now()) @updatedAt
+  start_date         DateTime?         @db.Date
+  bookings           Booking[]
+  reviews            Review[]
+  categories         TourCategory[]
+  destinations       TourDestination[]
+  gallery            TourGallery[]
+  plans              TourPlan[]
+
+  @@index([title])
+  @@index([price_per_person])
+  @@map("tours")
+}
+
+model TourCategory {
+  tour_id     Int
+  category_id Int
+  category    Category @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
+  tour        Tour     @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
+
+  @@id([tour_id, category_id])
+  @@map("tour_categories")
+}
+
+model TourDestination {
+  tour_id        Int
+  destination_id Int
+  destination    Destination @relation(fields: [destination_id], references: [destination_id], onDelete: Cascade)
+  tour           Tour        @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
+
+  @@id([tour_id, destination_id])
+  @@map("tour_destinations")
+}
+
+model TourGallery {
+  image_id  Int     @id @default(autoincrement())
+  tour_id   Int
+  image_url String  @db.VarChar(255)
+  caption   String? @db.VarChar(255)
+  tour      Tour    @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
+
+  @@map("tour_gallery")
+}
+
+model TourPlan {
+  plan_day_id Int    @id @default(autoincrement())
+  tour_id     Int
+  day_number  Int
+  title       String @db.VarChar(255)
+  description String
+  inclusions  Json?
+  tour        Tour   @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
+
+  @@map("tour_plans")
+}
+
+model Booking {
+  booking_id      Int           @id @default(autoincrement())
+  user_id         Int?
+  tour_id         Int
+  booking_date    DateTime      @db.Date
+  num_guests      Int
+  total_price     Decimal       @db.Decimal(12, 2)
+  status          BookingStatus @default(pending)
+  guest_full_name String?       @db.VarChar(100)
+  guest_email     String?       @db.VarChar(100)
+  guest_phone     String?       @db.VarChar(20)
+  created_at      DateTime?     @default(now())
+  tour            Tour          @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
+  user            User?         @relation(fields: [user_id], references: [user_id])
+  payment         Payment?
+  review          Review?
+
+  @@index([user_id])
+  @@index([tour_id])
+  @@map("bookings")
+}
+
+model Payment {
+  payment_id     Int           @id @default(autoincrement())
+  booking_id     Int           @unique
+  amount         Decimal       @db.Decimal(12, 2)
+  payment_method String        @default("internet_banking") @db.VarChar(50)
+  status         PaymentStatus @default(pending)
+  transaction_id String?       @db.VarChar(255)
+  paid_at        DateTime?
+  created_at     DateTime?     @default(now())
+  booking        Booking       @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Review {
+  review_id  Int          @id @default(autoincrement())
+  user_id    Int
+  tour_id    Int
+  rating     Int
+  comment    String?
+  created_at DateTime?    @default(now())
+  booking_id Int          @unique
+  comments   Comment[]
+  likes      ReviewLike[]
+  booking    Booking      @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
+  tour       Tour         @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
+  user       User         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([tour_id])
+  @@index([user_id])
+  @@map("reviews")
+}
+
+model ReviewLike {
+  user_id    Int
+  review_id  Int
+  created_at DateTime? @default(now())
+  review     Review    @relation(fields: [review_id], references: [review_id], onDelete: Cascade)
+  user       User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@id([user_id, review_id])
+  @@map("review_likes")
+}
+
+model Comment {
+  comment_id        Int       @id @default(autoincrement())
+  user_id           Int
+  review_id         Int
+  parent_comment_id Int?
+  content           String
+  created_at        DateTime? @default(now())
+  parent            Comment?  @relation("CommentReplies", fields: [parent_comment_id], references: [comment_id], onDelete: Cascade, onUpdate: NoAction)
+  replies           Comment[] @relation("CommentReplies")
+  review            Review    @relation(fields: [review_id], references: [review_id], onDelete: Cascade)
+  user              User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([review_id])
+  @@map("comments")
+}
+
 enum Role {
   user
   admin
@@ -31,235 +223,4 @@ enum PaymentStatus {
   pending
   completed
   failed
-}
-
-// 1. Bảng USERS
-model User {
-  user_id         Int            @id @default(autoincrement())
-  full_name       String         @db.VarChar(100)
-  email           String         @unique @db.VarChar(100)
-  password_hash   String?        @db.VarChar(255)
-  phone_number    String?        @db.VarChar(20)
-  avatar_url      String?        @db.VarChar(255)
-  role            Role           @default(user)
-  auth_provider   AuthProvider   @default(local)
-  provider_id     String?        @db.VarChar(255)
-  created_at      DateTime?      @default(now())
-  updated_at      DateTime?      @default(now()) @updatedAt
-
-  // Relations
-  bookings        Booking[]
-  reviews         Review[]
-  review_likes    ReviewLike[]
-  comments        Comment[]
-
-  @@map("users")
-}
-
-// 2. Bảng CATEGORIES
-model Category {
-  category_id Int            @id @default(autoincrement())
-  name        String         @unique @db.VarChar(100)
-  description String?        @db.Text
-  created_at  DateTime?      @default(now())
-
-  // Relations
-  tours       TourCategory[]
-
-  @@map("categories")
-}
-
-// 3. Bảng DESTINATIONS
-model Destination {
-  destination_id Int               @id @default(autoincrement())
-  name           String            @unique @db.VarChar(100)
-  country        String?           @db.VarChar(100)
-  image_url      String?           @db.VarChar(255)
-  description    String?           @db.Text
-
-  // Relations
-  tours          TourDestination[]
-
-  @@map("destinations")
-}
-
-// 4. Bảng TOURS
-model Tour {
-  tour_id            Int               @id @default(autoincrement())
-  title              String            @db.VarChar(255)
-  description        String            @db.Text
-  price_per_person   Decimal           @db.Decimal(10, 2)
-  duration_days      Int
-  max_guests         Int
-  cover_image_url    String?           @db.VarChar(255)
-  departure_location String?           @db.VarChar(255)
-  departure_time     DateTime?         @db.Time
-  return_time        DateTime?         @db.Time
-  start_date         DateTime?         @db.Date
-  what_included      Json?             @db.JsonB
-  what_not_included  Json?             @db.JsonB
-  created_at         DateTime?         @default(now())
-  updated_at         DateTime?         @default(now()) @updatedAt
-
-  // Relations
-  categories         TourCategory[]
-  destinations       TourDestination[]
-  gallery            TourGallery[]
-  plans              TourPlan[]
-  bookings           Booking[]
-  reviews            Review[]
-
-  @@index([title])
-  @@index([price_per_person])
-  @@map("tours")
-}
-
-// 5. Bảng TOUR_CATEGORIES (Bảng nối)
-model TourCategory {
-  tour_id     Int
-  category_id Int
-
-  // Relations
-  tour        Tour     @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
-  category    Category @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
-
-  @@id([tour_id, category_id])
-  @@map("tour_categories")
-}
-
-// 6. Bảng TOUR_DESTINATIONS (Bảng nối)
-model TourDestination {
-  tour_id        Int
-  destination_id Int
-
-  // Relations
-  tour           Tour        @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
-  destination    Destination @relation(fields: [destination_id], references: [destination_id], onDelete: Cascade)
-
-  @@id([tour_id, destination_id])
-  @@map("tour_destinations")
-}
-
-// 7. Bảng TOUR_GALLERY
-model TourGallery {
-  image_id  Int       @id @default(autoincrement())
-  tour_id   Int
-  image_url String    @db.VarChar(255)
-  caption   String?   @db.VarChar(255)
-
-  // Relations
-  tour      Tour      @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
-
-  @@map("tour_gallery")
-}
-
-// 8. Bảng TOUR_PLANS
-model TourPlan {
-  plan_day_id Int       @id @default(autoincrement())
-  tour_id     Int
-  day_number  Int
-  title       String    @db.VarChar(255)
-  description String    @db.Text
-  inclusions  Json?     @db.JsonB
-
-  // Relations
-  tour        Tour      @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
-
-  @@map("tour_plans")
-}
-
-// 9. Bảng BOOKINGS
-model Booking {
-  booking_id      Int           @id @default(autoincrement())
-  user_id         Int?
-  tour_id         Int
-  booking_date    DateTime      @db.Date
-  num_guests      Int
-  total_price     Decimal       @db.Decimal(12, 2)
-  status          BookingStatus @default(pending)
-  guest_full_name String?       @db.VarChar(100)
-  guest_email     String?       @db.VarChar(100)
-  guest_phone     String?       @db.VarChar(20)
-  created_at      DateTime?     @default(now())
-
-  // Relations
-  user            User?         @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
-  tour            Tour          @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
-  payment         Payment? // Quan hệ 1-1
-
-  @@index([user_id])
-  @@index([tour_id])
-  @@map("bookings")
-}
-
-// 10. Bảng PAYMENTS
-model Payment {
-  payment_id     Int           @id @default(autoincrement())
-  booking_id     Int           @unique // Đảm bảo quan hệ 1-1
-  amount         Decimal       @db.Decimal(12, 2)
-  payment_method String        @default("internet_banking") @db.VarChar(50)
-  status         PaymentStatus @default(pending)
-  transaction_id String?       @db.VarChar(255)
-  paid_at        DateTime?
-  created_at     DateTime?     @default(now())
-
-  // Relations
-  booking        Booking       @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
-
-  @@map("payments")
-}
-
-// 11. Bảng REVIEWS
-model Review {
-  review_id  Int       @id @default(autoincrement())
-  user_id    Int
-  tour_id    Int
-  rating     Int
-  comment    String?   @db.Text
-  created_at DateTime? @default(now())
-
-  // Relations
-  user       User         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  tour       Tour         @relation(fields: [tour_id], references: [tour_id], onDelete: Cascade)
-  likes      ReviewLike[]
-  comments   Comment[]
-
-  @@unique([user_id, tour_id])
-  @@index([tour_id])
-  @@map("reviews")
-}
-
-// 12. Bảng REVIEW_LIKES
-model ReviewLike {
-  user_id    Int
-  review_id  Int
-  created_at DateTime? @default(now())
-
-  // Relations
-  user       User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  review     Review    @relation(fields: [review_id], references: [review_id], onDelete: Cascade)
-
-  @@id([user_id, review_id])
-  @@map("review_likes")
-}
-
-// 13. Bảng COMMENTS
-model Comment {
-  comment_id        Int       @id @default(autoincrement())
-  user_id           Int
-  review_id         Int
-  parent_comment_id Int?
-  content           String    @db.Text
-  created_at        DateTime? @default(now())
-
-  // Relations
-  user              User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  review            Review    @relation(fields: [review_id], references: [review_id], onDelete: Cascade)
-
-  // Quan hệ tự tham chiếu (comment trả lời comment)
-  parent            Comment?  @relation("CommentReplies", fields: [parent_comment_id], references: [comment_id], onDelete: Cascade, onUpdate: NoAction)
-  replies           Comment[] @relation("CommentReplies")
-
-  @@index([review_id])
-  @@map("comments")
 }

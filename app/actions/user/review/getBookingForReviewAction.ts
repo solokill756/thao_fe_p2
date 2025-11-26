@@ -3,7 +3,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/lib/authOptions';
 import prisma from '@/app/lib/prisma';
-import { getReviewByUserAndTour } from '@/app/lib/services/reviewService';
+import { getReviewByBookingId } from '@/app/lib/services/reviewService';
 
 interface BookingForReviewResponse {
   success: boolean;
@@ -92,10 +92,9 @@ export async function getBookingForReviewAction(
       return { success: false, error: 'Booking is not eligible for review' };
     }
 
-    const existingReview = await getReviewByUserAndTour(
-      userId,
-      booking.tour.tour_id
-    );
+    const existingReview = await getReviewByBookingId(bookingId);
+
+    console.log('existingReview', existingReview);
 
     return {
       success: true,

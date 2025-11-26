@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import {
@@ -20,8 +19,8 @@ import {
   ADMIN_BOOKINGS_CONSTANTS,
   PLACEHOLDER_IMAGES,
 } from '@/app/lib/constants';
-import { useNavigationLoading } from '@/app/lib/hooks/useNavigationLoading';
 import toast from 'react-hot-toast';
+import { useNavigation } from '../contexts/NavigationContext';
 
 interface SidebarProps {
   dictionary: DictType;
@@ -33,29 +32,42 @@ interface NavItemProps {
   text: string;
   href: string;
   isActive: boolean;
+  onClick: () => void;
 }
 
-const NavItem = ({ icon, text, href, isActive }: NavItemProps) => (
-  <Link
-    href={href}
-    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-      isActive
-        ? 'bg-blue-600 text-white shadow-lg'
-        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-    }`}
-  >
-    {React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
-      className: 'w-5 h-5',
-    })}
-    <span className="font-medium">{text}</span>
-  </Link>
-);
+const NavItem = ({ icon, text, href, isActive, onClick }: NavItemProps) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition text-left ${
+        isActive
+          ? 'bg-blue-600 text-white shadow-lg'
+          : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+      }`}
+    >
+      {React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
+        className: 'w-5 h-5',
+      })}
+      <span className="font-medium">{text}</span>
+    </button>
+  );
+};
 
 export default function Sidebar({ dictionary, locale }: SidebarProps) {
   const sidebarDict = dictionary.admin?.sidebar;
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { push, refresh } = useNavigationLoading();
+  const [isMounted, setIsMounted] = useState(false);
+  const [activePath, setActivePath] = useState(pathname);
+  const { push, refresh } = useNavigation();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    setActivePath(pathname);
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
@@ -145,7 +157,7 @@ export default function Sidebar({ dictionary, locale }: SidebarProps) {
   ];
 
   const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href + '/');
+    activePath === href || activePath.startsWith(href + '/');
 
   return (
     <div className="w-64 bg-slate-900 text-white min-h-screen fixed left-0 top-0 hidden lg:flex flex-col">
@@ -166,6 +178,10 @@ export default function Sidebar({ dictionary, locale }: SidebarProps) {
             text={item.text}
             href={item.href}
             isActive={isActive(item.href)}
+            onClick={() => {
+              setActivePath(item.href);
+              push(item.href);
+            }}
           />
         ))}
 
@@ -180,26 +196,35 @@ export default function Sidebar({ dictionary, locale }: SidebarProps) {
             text={item.text}
             href={item.href}
             isActive={isActive(item.href)}
+            onClick={() => {
+              setActivePath(item.href);
+              push(item.href);
+            }}
           />
         ))}
       </nav>
       <div className="p-4 border-t border-slate-800 space-y-2">
         <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-800">
           <img
-            src={session?.user?.image || PLACEHOLDER_IMAGES.ADMIN_AVATAR}
+            src={
+              isMounted && session?.user?.image
+                ? session.user.image
+                : PLACEHOLDER_IMAGES.ADMIN_AVATAR
+            }
             alt="Admin"
             className="w-8 h-8 rounded-full"
           />
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium truncate">
-              {session?.user?.name ||
-                sidebarDict?.adminUser ||
-                ADMIN_BOOKINGS_CONSTANTS.ADMIN_USER}
+              {isMounted && session?.user?.name
+                ? session.user.name
+                : sidebarDict?.adminUser || ADMIN_BOOKINGS_CONSTANTS.ADMIN_USER}
             </div>
             <div className="text-xs text-slate-400 truncate">
-              {session?.user?.email ||
-                sidebarDict?.adminEmail ||
-                ADMIN_BOOKINGS_CONSTANTS.ADMIN_EMAIL}
+              {isMounted && session?.user?.email
+                ? session.user.email
+                : sidebarDict?.adminEmail ||
+                  ADMIN_BOOKINGS_CONSTANTS.ADMIN_EMAIL}
             </div>
           </div>
         </div>

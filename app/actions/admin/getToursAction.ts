@@ -1,17 +1,17 @@
 'use server';
+
 import { authOptions } from '@/app/lib/authOptions';
-import { deleteBooking } from '@/app/lib/services/bookingService';
 import { getServerSession } from 'next-auth';
 import { ERROR_MESSAGES } from '@/app/lib/constants';
 import { createUnauthorizedError } from '@/app/lib/utils/errors';
-import {
-  revalidateBookingsCache,
-  revalidateTourDetailCache,
-} from '@/app/lib/services/cacheUtils';
+import type { TourWithRelations } from '@/app/lib/types/tourTypes';
+import { fetchAdminTours } from '@/app/lib/services/tourService';
 
-export async function deleteBookingAction(bookingId: number): Promise<{
+export type { TourWithRelations } from '@/app/lib/types/tourTypes';
+
+export async function getToursAction(): Promise<{
   success: boolean;
-  message?: string;
+  tours?: TourWithRelations[];
   error?: string;
 }> {
   try {
@@ -20,26 +20,21 @@ export async function deleteBookingAction(bookingId: number): Promise<{
       throw createUnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED);
     }
 
-    await deleteBooking(bookingId);
-
-    revalidateBookingsCache();
-    revalidateTourDetailCache();
-
+    const tours = await fetchAdminTours();
     return {
       success: true,
-      message: 'Booking deleted successfully',
+      tours,
     };
   } catch (error) {
-    console.error('Error deleting booking:', {
+    console.error('Error getting tours:', {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
-      action: 'deleteBookingAction',
-      bookingId,
+      action: 'getToursAction',
     });
     return {
       success: false,
-      error: 'Error deleting booking',
+      error: 'Error getting tours',
     };
   }
 }

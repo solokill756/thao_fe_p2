@@ -3,7 +3,6 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/lib/authOptions';
 import prisma from '@/app/lib/prisma';
-import { revalidatePath } from 'next/cache';
 import z from 'zod';
 import { getDictionary } from '@/app/lib/get-dictionary';
 import { DictType } from '@/app/lib/types/dictType';
@@ -12,6 +11,10 @@ import {
   BOOKING_STATUS,
   DEFAULT_LOCALE,
 } from '@/app/lib/constants';
+import {
+  revalidateBookingsCache,
+  revalidateTourDetailCache,
+} from '@/app/lib/services/cacheUtils';
 
 type Locale = 'en' | 'vi';
 
@@ -212,7 +215,7 @@ export async function createBookingAction(
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id ? parseInt(session.user.id) : null;
 
-    const { name, email, phone, date, guests, message } = validationResult.data;
+    const { name, email, phone, date, guests } = validationResult.data;
 
     const bookingDate = new Date(date);
     bookingDate.setHours(0, 0, 0, 0);
@@ -269,7 +272,8 @@ export async function createBookingAction(
       },
     });
 
-    revalidatePath(`/tours/${tourId}`);
+    revalidateBookingsCache();
+    revalidateTourDetailCache();
 
     return {
       success: true,

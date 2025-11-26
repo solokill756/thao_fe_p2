@@ -79,7 +79,7 @@ export default function ReviewSummary({
                   {tourDict.departureDate || 'Start date'}
                 </p>
                 <p className="font-medium">
-                  {formatDate(booking.start_date ?? booking.booking_date)}
+                  {formatDate(booking.booking_date)}
                 </p>
               </div>
             </div>

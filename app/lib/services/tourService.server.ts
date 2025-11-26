@@ -2,6 +2,7 @@
 
 import { cacheLife, cacheTag } from 'next/cache';
 import {
+  fetchAdminTours,
   fetchTourById,
   fetchTours,
   fetchTrendingTours,
@@ -36,4 +37,11 @@ export const getTourById = async (tourId: number) => {
   cacheTag(CACHE_TAGS.TOURS);
   cacheTag(CACHE_TAGS.TOUR_DETAIL);
   return fetchTourById(tourId);
+};
+
+export const getAdminTours = async () => {
+  'use cache';
+  cacheTag(CACHE_TAGS.TOURS);
+  cacheTag(CACHE_TAGS.TOURS_ADMIN);
+  return fetchAdminTours();
 };

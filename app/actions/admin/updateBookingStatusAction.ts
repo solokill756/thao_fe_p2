@@ -6,6 +6,7 @@ import { authOptions } from '@/app/lib/authOptions';
 import { getServerSession } from 'next-auth';
 import { ERROR_MESSAGES } from '@/app/lib/constants';
 import { createUnauthorizedError } from '@/app/lib/utils/errors';
+import { revalidateBookingsCache } from '@/app/lib/services/cacheUtils';
 
 export async function updateBookingStatusAction(
   bookingId: number,
@@ -22,7 +23,7 @@ export async function updateBookingStatusAction(
     }
 
     await updateBookingStatus(bookingId, newStatus);
-
+    revalidateBookingsCache();
     return {
       success: true,
       message: 'Booking status updated successfully',

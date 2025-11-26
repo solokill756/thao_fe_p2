@@ -9,19 +9,24 @@ interface AdminHeaderProps {
   dictionary: DictType;
   searchTerm: string;
   onSearchChange: (value: string) => void;
+  title?: string;
+  searchPlaceholder?: string;
 }
 
 export default function AdminHeader({
   dictionary,
   searchTerm,
   onSearchChange,
+  title,
+  searchPlaceholder,
 }: AdminHeaderProps) {
   const adminDict = dictionary.admin?.bookings || {};
 
   return (
     <header className="bg-white shadow-sm border-b border-slate-100 sticky top-0 z-20 px-8 py-4 flex justify-between items-center">
       <h2 className="text-xl font-bold text-slate-800">
-        {adminDict.bookingRequests ||
+        {title ||
+          adminDict.bookingRequests ||
           ADMIN_BOOKINGS_CONSTANTS.BOOKING_REQUESTS}
       </h2>
       <div className="flex items-center space-x-4">
@@ -30,6 +35,7 @@ export default function AdminHeader({
           <input
             type="text"
             placeholder={
+              searchPlaceholder ||
               adminDict.searchPlaceholder ||
               ADMIN_BOOKINGS_CONSTANTS.SEARCH_PLACEHOLDER
             }
@@ -49,4 +55,3 @@ export default function AdminHeader({
     </header>
   );
 }
-

@@ -39,7 +39,7 @@ export default function PaymentForm({
   const paymentDict = dictionary.payment || {};
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} autoComplete="on">
       <PaymentMethodSelector
         paymentMethod={paymentMethod}
         onPaymentMethodChange={onPaymentMethodChange}

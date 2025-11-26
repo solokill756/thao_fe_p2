@@ -493,6 +493,7 @@ export const USER_PROFILE_CONSTANTS = {
   FULL_NAME_TOO_LONG: 'Full name must be less than 100 characters',
   PHONE_NUMBER_TOO_LONG: 'Phone number must be less than 20 characters',
   PAY_NOW: 'Pay Now',
+  VIEW_REVIEW: 'View Review',
 } as const;
 
 // Payment Constants

@@ -27,7 +27,7 @@ function getPreferredLocale(request: NextRequest): string {
   return 'en';
 }
 
-const protectedPaths: string[] = [];
+const protectedPaths: string[] = ['/admin', '/payment', '/review'];
 const loginPath = '/auth';
 
 export async function validateRequest(request: NextRequest) {

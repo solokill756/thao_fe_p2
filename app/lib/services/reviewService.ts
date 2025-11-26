@@ -4,6 +4,7 @@ import prisma from '../prisma';
 
 export interface ReviewRecord {
   review_id: number;
+  booking_id: number;
   user_id: number;
   tour_id: number;
   rating: number;
@@ -11,17 +12,13 @@ export interface ReviewRecord {
   created_at: Date | null;
 }
 
-export const getReviewByUserAndTour = async (
-  userId: number,
-  tourId: number
+export const getReviewByBookingId = async (
+  bookingId: number
 ): Promise<ReviewRecord | null> => {
   try {
     const review = await prisma.review.findUnique({
       where: {
-        user_id_tour_id: {
-          user_id: userId,
-          tour_id: tourId,
-        },
+        booking_id: bookingId,
       },
     });
     return review;
@@ -30,15 +27,15 @@ export const getReviewByUserAndTour = async (
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
-      action: 'getReviewByUserAndTour',
-      userId,
-      tourId,
+      action: 'getReviewByBookingId',
+      bookingId,
     });
     throw error;
   }
 };
 
 export const upsertReview = async (
+  bookingId: number,
   userId: number,
   tourId: number,
   rating: number,
@@ -47,16 +44,14 @@ export const upsertReview = async (
   try {
     const review = await prisma.review.upsert({
       where: {
-        user_id_tour_id: {
-          user_id: userId,
-          tour_id: tourId,
-        },
+        booking_id: bookingId,
       },
       update: {
         rating,
         comment,
       },
       create: {
+        booking_id: bookingId,
         user_id: userId,
         tour_id: tourId,
         rating,
@@ -70,6 +65,7 @@ export const upsertReview = async (
       stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
       action: 'upsertReview',
+      bookingId,
       userId,
       tourId,
     });

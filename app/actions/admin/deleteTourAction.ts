@@ -1,17 +1,14 @@
 'use server';
+
 import { authOptions } from '@/app/lib/authOptions';
-import { deleteBooking } from '@/app/lib/services/bookingService';
+import { deleteTour } from '@/app/lib/services/tourService';
 import { getServerSession } from 'next-auth';
 import { ERROR_MESSAGES } from '@/app/lib/constants';
 import { createUnauthorizedError } from '@/app/lib/utils/errors';
-import {
-  revalidateBookingsCache,
-  revalidateTourDetailCache,
-} from '@/app/lib/services/cacheUtils';
+import { revalidateAllTourCaches } from '@/app/lib/services/cacheUtils';
 
-export async function deleteBookingAction(bookingId: number): Promise<{
+export async function deleteTourAction(tourId: number): Promise<{
   success: boolean;
-  message?: string;
   error?: string;
 }> {
   try {
@@ -19,27 +16,21 @@ export async function deleteBookingAction(bookingId: number): Promise<{
     if (session?.user?.role !== 'admin') {
       throw createUnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED);
     }
-
-    await deleteBooking(bookingId);
-
-    revalidateBookingsCache();
-    revalidateTourDetailCache();
-
+    await deleteTour(tourId);
+    revalidateAllTourCaches();
     return {
       success: true,
-      message: 'Booking deleted successfully',
     };
   } catch (error) {
-    console.error('Error deleting booking:', {
+    console.error('Error deleting tour:', {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
-      action: 'deleteBookingAction',
-      bookingId,
+      action: 'deleteTourAction',
     });
     return {
       success: false,
-      error: 'Error deleting booking',
+      error: error instanceof Error ? error.message : 'Error deleting tour',
     };
   }
 }

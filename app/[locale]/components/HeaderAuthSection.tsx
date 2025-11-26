@@ -88,7 +88,7 @@ export default function HeaderAuthSection({
   };
 
   const handleProfileRedirect = () => {
-    push(`/${locale}/user/profile`);
+    push(`/${locale}/profile`);
   };
 
   return (

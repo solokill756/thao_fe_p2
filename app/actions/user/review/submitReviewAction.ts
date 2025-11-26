@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/lib/authOptions';
 import prisma from '@/app/lib/prisma';
 import {
-  getReviewByUserAndTour,
+  getReviewByBookingId,
   upsertReview,
 } from '@/app/lib/services/reviewService';
 import z from 'zod';
@@ -116,16 +116,26 @@ export async function submitReviewAction(
       return { success: false, error: 'Booking is not eligible for review' };
     }
 
-    const existingReview = await getReviewByUserAndTour(
-      userId,
-      booking.tour.tour_id
-    );
+    const existingReview = await getReviewByBookingId(bookingId);
 
     if (existingReview) {
-      return { success: false, error: 'Review already submitted' };
+      await upsertReview(
+        bookingId,
+        userId,
+        booking.tour.tour_id,
+        rating,
+        comment ?? null
+      );
+      return { success: true, message: 'Review updated successfully' };
     }
 
-    await upsertReview(userId, booking.tour.tour_id, rating, comment ?? null);
+    await upsertReview(
+      bookingId,
+      userId,
+      booking.tour.tour_id,
+      rating,
+      comment ?? null
+    );
 
     return { success: true, message: 'Review submitted' };
   } catch (error) {

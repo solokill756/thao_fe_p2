@@ -148,13 +148,13 @@ export const fetchUserBookings = async (
           user_id: userId,
         },
         select: {
-          tour_id: true,
+          booking_id: true,
         },
       }),
     ]);
 
-    const reviewedTourIds = new Set(
-      userReviews.map((review) => review.tour_id)
+    const reviewedBookingIds = new Set(
+      userReviews.map((review) => review.booking_id)
     );
 
     const transformedBookings: BookingWithRelations[] = bookings.map(
@@ -180,7 +180,7 @@ export const fetchUserBookings = async (
           duration_days: booking.tour.duration_days,
         },
         payment: booking.payment,
-        userReviewSubmitted: reviewedTourIds.has(booking.tour_id),
+        userReviewSubmitted: reviewedBookingIds.has(booking.booking_id),
       })
     );
 

@@ -17,7 +17,6 @@ export default async function RenderTrendingPackagesSection({
 }: RenderTrendingPackagesSectionProps) {
   const trendingPackagesDict = dictionary.trendingPackages;
 
-  // Fetch trending tours on server
   const trendingTours = await getTrendingTours(4);
 
   if (trendingTours.length === 0) {
