@@ -14,7 +14,7 @@ export async function updateUserStatusAction(
   role: Role
 ): Promise<{
   success: boolean;
-  error?: string;
+  message?: string;
 }> {
   try {
     const session = await getServerSession(authOptions);
@@ -26,6 +26,7 @@ export async function updateUserStatusAction(
     revalidateAllUserCaches();
     return {
       success: true,
+      message: 'User status updated successfully',
     };
   } catch (error) {
     console.error('Error updating user status:', {
@@ -36,7 +37,7 @@ export async function updateUserStatusAction(
     });
     return {
       success: false,
-      error:
+      message:
         error instanceof Error ? error.message : 'Failed to update user status',
     };
   }

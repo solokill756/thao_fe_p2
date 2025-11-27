@@ -445,6 +445,16 @@ export interface DictType {
       userStatusUpdated?: string;
       userDeleted?: string;
     };
+    dashboard?: {
+      overview?: string;
+      latestBookings?: string;
+      viewAllBookings?: string;
+      totalBookings?: string;
+      activeUsers?: string;
+      activeTours?: string;
+      vsLastMonth?: string;
+      noRecentBookings?: string;
+    };
   };
   payment?: {
     back?: string;

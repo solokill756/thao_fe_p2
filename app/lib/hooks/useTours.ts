@@ -114,6 +114,10 @@ export function useTours(initialTours: TourWithRelations[]) {
       }
       return result.tours || [];
     },
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 }
 
@@ -168,9 +172,6 @@ export function useCreateTour(locale: Locale = 'en') {
       }
       toast.error(error.message || 'Failed to create tour');
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminTours'] });
-    },
   });
 }
 
@@ -209,7 +210,12 @@ export function useUpdateTour(locale: Locale = 'en') {
 
       return { previousTours };
     },
-    onSuccess: () => {
+    onSuccess: (tour, variables) => {
+      queryClient.setQueryData<TourWithRelations[] | undefined>(
+        ['adminTours'],
+        (old) =>
+          old?.map((item) => (item.tour_id === variables.tour_id ? tour : item))
+      );
       toast.success('Tour updated successfully');
     },
     onError: (error: Error, _variables, context) => {
@@ -217,9 +223,6 @@ export function useUpdateTour(locale: Locale = 'en') {
         queryClient.setQueryData(['adminTours'], context.previousTours);
       }
       toast.error(error.message || 'Failed to update tour');
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminTours'] });
     },
   });
 }
@@ -255,9 +258,6 @@ export function useDeleteTour() {
         queryClient.setQueryData(['adminTours'], context.previousTours);
       }
       toast.error(error.message || 'Failed to delete tour');
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminTours'] });
     },
   });
 }

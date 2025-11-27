@@ -9,7 +9,7 @@ import { revalidateAllUserCaches } from '@/app/lib/services/cacheUtils';
 
 export async function deleteUserAction(userId: number): Promise<{
   success: boolean;
-  error?: string;
+  message?: string;
 }> {
   try {
     const session = await getServerSession(authOptions);
@@ -21,6 +21,7 @@ export async function deleteUserAction(userId: number): Promise<{
     revalidateAllUserCaches();
     return {
       success: true,
+      message: 'User deleted successfully',
     };
   } catch (error) {
     console.error('Error deleting user:', {
@@ -31,7 +32,7 @@ export async function deleteUserAction(userId: number): Promise<{
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to delete user',
+      message: error instanceof Error ? error.message : 'Failed to delete user',
     };
   }
 }

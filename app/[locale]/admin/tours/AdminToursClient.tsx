@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import type { DictType } from '@/app/lib/types/dictType';
 import {
   useTours,
@@ -32,7 +31,6 @@ export default function AdminToursClient({
   initialCategories,
   initialDestinations,
 }: AdminToursClientProps) {
-  const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTour, setCurrentTour] = useState<TourWithRelations | null>(
@@ -75,31 +73,32 @@ export default function AdminToursClient({
     }
   }, [initialCategories, initialDestinations]);
 
-  const handleSave = async (formData: UpdateTourData | CreateTourData) => {
+  const handleSave = (formData: UpdateTourData | CreateTourData) => {
+    setIsModalOpen(false);
+    setCurrentTour(null);
+
     if (currentTour) {
-      await updateTourMutation.mutateAsync({
+      updateTourMutation.mutate({
         tour_id: currentTour.tour_id,
         ...formData,
         locale,
       } as UpdateTourData & { locale: 'en' | 'vi' });
     } else {
-      await createTourMutation.mutateAsync({
+      createTourMutation.mutate({
         ...formData,
         locale,
       } as CreateTourData & { locale: 'en' | 'vi' });
     }
-    setIsModalOpen(false);
-    setCurrentTour(null);
   };
 
-  const handleDelete = async (tourId: number) => {
+  const handleDelete = (tourId: number) => {
     if (
       window.confirm(
         dictionary.admin?.tours?.confirmDelete ||
           'Are you sure you want to delete this tour? This action cannot be undone.'
       )
     ) {
-      await deleteTourMutation.mutateAsync(tourId);
+      deleteTourMutation.mutate(tourId);
     }
   };
 

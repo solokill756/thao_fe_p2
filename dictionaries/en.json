@@ -264,6 +264,16 @@
       "logoutSuccess": "Logged out successfully!",
       "logoutFailed": "Logout failed"
     },
+    "dashboard": {
+      "overview": "Overview",
+      "latestBookings": "Latest Bookings",
+      "viewAllBookings": "View All Bookings",
+      "totalBookings": "Total Bookings",
+      "activeUsers": "Active Users",
+      "activeTours": "Active Tours",
+      "vsLastMonth": "vs last month",
+      "noRecentBookings": "No recent bookings"
+    },
     "bookings": {
       "bookingRequests": "Booking Requests",
       "searchPlaceholder": "Search bookings...",

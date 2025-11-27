@@ -30,37 +30,15 @@ export function useUpdateUserStatus() {
   return useMutation({
     mutationFn: async ({ userId, role }: { userId: number; role: Role }) => {
       const result = await updateUserStatusAction(userId, role);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update user status');
-      }
+      return result;
     },
-    onMutate: async ({ userId, role }) => {
-      await queryClient.cancelQueries({ queryKey: ['adminUsers'] });
-      const previousUsers = queryClient.getQueryData<UserWithStats[]>([
-        'adminUsers',
-      ]);
 
-      queryClient.setQueryData<UserWithStats[] | undefined>(
-        ['adminUsers'],
-        (old) =>
-          old?.map((user) =>
-            user.user_id === userId ? { ...user, role } : user
-          )
-      );
-
-      return { previousUsers };
-    },
-    onSuccess: () => {
-      toast.success('User status updated successfully');
-    },
-    onError: (error: Error, _variables, context) => {
-      if (context?.previousUsers) {
-        queryClient.setQueryData(['adminUsers'], context.previousUsers);
-      }
-      toast.error(error.message || 'Failed to update user status');
-    },
-    onSettled: () => {
+    onSuccess: (result) => {
+      toast.success(result.message || 'User status updated successfully');
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
+    },
+    onError: (error: Error, _variables) => {
+      toast.error(error.message || 'Failed to update user status');
     },
   });
 }
@@ -71,34 +49,18 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: async (userId: number) => {
       const result = await deleteUserAction(userId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to delete user');
+      return result;
+    },
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success(result.message || 'User deleted successfully');
+      } else {
+        toast.error(result.message || 'Failed to delete user');
       }
-    },
-    onMutate: async (userId: number) => {
-      await queryClient.cancelQueries({ queryKey: ['adminUsers'] });
-      const previousUsers = queryClient.getQueryData<UserWithStats[]>([
-        'adminUsers',
-      ]);
-
-      queryClient.setQueryData<UserWithStats[] | undefined>(
-        ['adminUsers'],
-        (old) => old?.filter((user) => user.user_id !== userId)
-      );
-
-      return { previousUsers };
-    },
-    onSuccess: () => {
-      toast.success('User deleted successfully');
-    },
-    onError: (error: Error, _variables, context) => {
-      if (context?.previousUsers) {
-        queryClient.setQueryData(['adminUsers'], context.previousUsers);
-      }
-      toast.error(error.message || 'Failed to delete user');
-    },
-    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
+    },
+    onError: (error: Error, _variables) => {
+      toast.error(error.message || 'Failed to delete user');
     },
   });
 }

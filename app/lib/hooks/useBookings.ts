@@ -30,5 +30,7 @@ export const useBookings = (
     },
     enabled,
     ...queryOptions,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 };

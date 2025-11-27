@@ -89,7 +89,7 @@ export default function AdminBookingsClient({
     );
   }
 
-  const handleStatusChange = async (
+  const handleStatusChange = (
     bookingId: number,
     newStatus: 'pending' | 'confirmed' | 'cancelled'
   ) => {
@@ -98,40 +98,10 @@ export default function AdminBookingsClient({
       return;
     }
 
-    try {
-      const result = await updateBookingStatusMutation.mutateAsync({
-        bookingId,
-        newStatus,
-      });
-
-      if (result.success) {
-        const statusLabel =
-          newStatus === 'pending'
-            ? adminDict.pending || ADMIN_BOOKINGS_CONSTANTS.PENDING
-            : newStatus === 'confirmed'
-              ? adminDict.confirmed || ADMIN_BOOKINGS_CONSTANTS.CONFIRMED
-              : adminDict.cancelled || ADMIN_BOOKINGS_CONSTANTS.CANCELLED;
-        const message =
-          result.message ||
-          (
-            adminDict.bookingHasBeen ||
-            ADMIN_BOOKINGS_CONSTANTS.BOOKING_HAS_BEEN
-          )
-            .replace('{id}', bookingId.toString())
-            .replace('{status}', statusLabel.toLowerCase());
-        toast.success(message);
-      } else {
-        toast.error(
-          result.error ||
-            adminDict.failedToUpdate ||
-            ADMIN_BOOKINGS_CONSTANTS.FAILED_TO_UPDATE
-        );
-      }
-    } catch (error) {
-      toast.error(
-        adminDict.failedToUpdate || ADMIN_BOOKINGS_CONSTANTS.FAILED_TO_UPDATE
-      );
-    }
+    updateBookingStatusMutation.mutate({
+      bookingId,
+      newStatus,
+    });
   };
 
   // Filter & Search

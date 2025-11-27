@@ -269,6 +269,16 @@
       "logoutSuccess": "Đã đăng xuất thành công!",
       "logoutFailed": "Đăng xuất thất bại"
     },
+    "dashboard": {
+      "overview": "Tổng Quan",
+      "latestBookings": "Đặt Tour Gần Đây",
+      "viewAllBookings": "Xem Tất Cả Đặt Tour",
+      "totalBookings": "Tổng Đặt Tour",
+      "activeUsers": "Người Dùng Hoạt Động",
+      "activeTours": "Tour Hoạt Động",
+      "vsLastMonth": "so với tháng trước",
+      "noRecentBookings": "Không có đặt tour gần đây"
+    },
     "bookings": {
       "bookingRequests": "Yêu Cầu Đặt Tour",
       "searchPlaceholder": "Tìm kiếm đặt tour...",

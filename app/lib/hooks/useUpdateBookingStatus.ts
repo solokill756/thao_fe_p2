@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateBookingStatusAction } from '@/app/actions/admin/updateBookingStatusAction';
 import type { BookingWithRelations } from '@/app/lib/services/bookingService';
+import toast from 'react-hot-toast';
 
 interface UpdateBookingStatusVariables {
   bookingId: number;
@@ -14,6 +15,7 @@ export const useUpdateBookingStatus = () => {
 
   type MutationContext = {
     previousBookings?: BookingWithRelations[];
+    previousStatus?: 'pending' | 'confirmed' | 'cancelled';
   };
 
   return useMutation<
@@ -31,6 +33,12 @@ export const useUpdateBookingStatus = () => {
       const previousBookings = queryClient.getQueryData<BookingWithRelations[]>(
         ['bookings']
       );
+
+      const previousBooking = previousBookings?.find(
+        (b) => b.booking_id === bookingId
+      );
+      const previousStatus = previousBooking?.status;
+
       const updateCachedBookings = (
         bookings: BookingWithRelations[] | undefined
       ) => {
@@ -43,15 +51,23 @@ export const useUpdateBookingStatus = () => {
       };
 
       queryClient.setQueryData(['bookings'], updateCachedBookings);
-      return { previousBookings };
+      return { previousBookings, previousStatus };
     },
-    onError: (_error, _variables, context) => {
+    onSuccess: (result, variables, context) => {
+      if (result.success) {
+        toast.success(result.message || 'Booking status updated successfully');
+      } else {
+        if (context?.previousBookings) {
+          queryClient.setQueryData(['bookings'], context.previousBookings);
+        }
+        toast.error(result.error || 'Failed to update booking status');
+      }
+    },
+    onError: (error, _variables, context) => {
       if (context?.previousBookings) {
         queryClient.setQueryData(['bookings'], context.previousBookings);
       }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      toast.error(error.message || 'Failed to update booking status');
     },
   });
 };
