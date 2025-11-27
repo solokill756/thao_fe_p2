@@ -1,7 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
-import { updateBookingStatus } from '@/app/lib/services/bookingService';
+import {
+  fecthBookingById,
+  updateBookingStatus,
+} from '@/app/lib/services/bookingService';
 import { authOptions } from '@/app/lib/authOptions';
 import { getServerSession } from 'next-auth';
 import { ERROR_MESSAGES } from '@/app/lib/constants';
@@ -21,7 +23,28 @@ export async function updateBookingStatusAction(
     if (session?.user?.role !== 'admin') {
       throw createUnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED);
     }
+    if (newStatus === 'confirmed') {
+      const booking = await fecthBookingById(bookingId);
+      const bookingStartDate = new Date(booking.booking_date);
+      bookingStartDate.setHours(0, 0, 0, 0);
 
+      const durationDays = Number(booking.tour?.duration_days ?? 0);
+      const bookingEndDate = new Date(bookingStartDate);
+      bookingEndDate.setDate(bookingEndDate.getDate() + durationDays);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (today > bookingEndDate) {
+        await updateBookingStatus(bookingId, 'cancelled');
+        revalidateBookingsCache();
+        return {
+          success: false,
+          error:
+            'Booking date is in the past. The booking was cancelled automatically.',
+        };
+      }
+    }
     await updateBookingStatus(bookingId, newStatus);
     revalidateBookingsCache();
     return {

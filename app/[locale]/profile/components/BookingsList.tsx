@@ -1,5 +1,3 @@
-'use client';
-
 import type { DictType } from '@/app/lib/types/dictType';
 import type { BookingWithRelations } from '@/app/actions/user/profile/getUserBookingsAction';
 import { USER_PROFILE_CONSTANTS } from '@/app/lib/constants';

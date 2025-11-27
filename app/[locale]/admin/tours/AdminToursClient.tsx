@@ -67,8 +67,12 @@ export default function AdminToursClient({
   };
 
   useEffect(() => {
-    setCategories(initialCategories);
-    setDestinations(initialDestinations);
+    if (initialCategories && initialDestinations) {
+      setTimeout(() => {
+        setCategories(initialCategories);
+        setDestinations(initialDestinations);
+      }, 0);
+    }
   }, [initialCategories, initialDestinations]);
 
   const handleSave = async (formData: UpdateTourData | CreateTourData) => {

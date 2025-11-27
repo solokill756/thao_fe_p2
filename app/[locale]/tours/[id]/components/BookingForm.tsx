@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Tour } from '@/app/lib/types/tourTypes';
@@ -13,6 +12,9 @@ import {
   TOAST_DURATION,
 } from '@/app/lib/constants';
 import { createBookingAction } from '@/app/actions/booking/createBookingAction';
+import { useUserProfileStore } from '@/app/lib/stores/userProfileStore';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 
 interface BookingFormProps {
   tour: Tour;
@@ -25,20 +27,22 @@ export default function BookingForm({
   locale,
   dictionary,
 }: BookingFormProps) {
-  const { data: session } = useSession();
   const [isPending, startTransition] = useTransition();
   const [isOptimistic, setIsOptimistic] = useState(false);
   const [optimisticData, setOptimisticData] = useState<typeof formData | null>(
     null
   );
+  const session = useSession();
+  const { name, email, phoneNumber } = useUserProfileStore();
   const [formData, setFormData] = useState({
-    name: session?.user?.name || '',
-    email: session?.user?.email || '',
-    phone: '',
+    name: name || '',
+    email: email || '',
+    phone: phoneNumber || '',
     date: '',
     guests: 2,
     message: '',
   });
+  const queryClient = useQueryClient();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -53,10 +57,25 @@ export default function BookingForm({
     }));
   };
 
+  useEffect(() => {
+    if (!session.data?.user) {
+      queueMicrotask(() => {
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          date: '',
+          guests: DEFAULT_VALUES.DEFAULT_GUESTS,
+          message: '',
+        });
+      });
+    }
+  }, [session.data?.user]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!session?.user) {
+    if (!email) {
       toast.error(
         dictionary.tourDetail?.loginToBook || DEFAULT_VALUES.LOGIN_TO_BOOK
       );
@@ -91,11 +110,11 @@ export default function BookingForm({
         if (result.success) {
           setIsOptimistic(false);
           setOptimisticData(null);
-
+          queryClient.invalidateQueries({ queryKey: ['userBookings'] });
           setFormData({
-            name: session?.user?.name || '',
-            email: session?.user?.email || '',
-            phone: '',
+            name: name || '',
+            email: email || '',
+            phone: phoneNumber || '',
             date: '',
             guests: DEFAULT_VALUES.DEFAULT_GUESTS,
             message: '',
@@ -124,6 +143,7 @@ export default function BookingForm({
         setIsOptimistic(false);
         setOptimisticData(null);
         toast.dismiss();
+        console.error('Booking error:', error);
         toast.error(
           dictionary.tourDetail?.bookingError || DEFAULT_VALUES.BOOKING_ERROR
         );
@@ -132,19 +152,6 @@ export default function BookingForm({
   };
 
   const tourDetailDict = dictionary.tourDetail;
-
-  useEffect(() => {
-    if (session?.user) {
-      setFormData({
-        name: session?.user?.name || '',
-        email: session?.user?.email || '',
-        phone: '',
-        date: '',
-        guests: DEFAULT_VALUES.DEFAULT_GUESTS,
-        message: '',
-      });
-    }
-  }, [session?.user]);
 
   const displayData =
     isOptimistic && optimisticData ? optimisticData : formData;

@@ -168,6 +168,8 @@ export interface DictType {
     payNow?: string;
     cancel?: string;
     cancelling?: string;
+    deleteBooking?: string;
+    deleting?: string;
     bookingCancelled?: string;
     bookingCancellationFailed?: string;
     profileUpdated?: string;

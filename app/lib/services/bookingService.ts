@@ -1,3 +1,4 @@
+import { Booking } from '@prisma/client';
 import prisma from '../prisma';
 
 export interface BookingWithRelations {
@@ -213,6 +214,24 @@ export const deleteBooking = async (bookingId: number): Promise<void> => {
     });
   } catch (error) {
     console.error('Error deleting booking:', error);
+    throw error;
+  }
+};
+
+export const fecthBookingById = async (
+  bookingId: number
+): Promise<BookingWithRelations> => {
+  try {
+    const bookings = await fetchBookings();
+    const booking = bookings.find(
+      (booking) => booking.booking_id === bookingId
+    );
+    if (!booking) {
+      throw new Error('Booking not found');
+    }
+    return booking;
+  } catch (error) {
+    console.error('Error fetching booking by id:', error);
     throw error;
   }
 };

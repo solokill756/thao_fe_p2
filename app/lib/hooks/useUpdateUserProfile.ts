@@ -1,5 +1,5 @@
 import { updateUserProfileAction } from '@/app/actions/user/profile/updateUserProfileAction';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 interface UpdateUserProfileVariables {
   fullName?: string;
@@ -8,7 +8,6 @@ interface UpdateUserProfileVariables {
 }
 
 export const useUpdateUserProfile = () => {
-  const queryClient = useQueryClient();
   return useMutation<
     {
       success: boolean;

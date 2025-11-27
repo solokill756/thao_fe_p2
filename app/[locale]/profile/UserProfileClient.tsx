@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import { signOut } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import type { DictType } from '@/app/lib/types/dictType';
@@ -10,11 +9,10 @@ import { useNavigationLoading } from '@/app/lib/hooks/useNavigationLoading';
 import ErrorRetry from '@/app/components/common/ErrorRetry';
 import { USER_PROFILE_CONSTANTS } from '@/app/lib/constants';
 import { useUserProfileStore } from '@/app/lib/stores/userProfileStore';
-import UnauthorizedView from './UnauthorizedView';
-import UserProfileSidebar from './UserProfileSidebar';
-import ProfileSettingsSection from './ProfileSettingsSection';
-import BookingsSection from './BookingsSection';
-import Loading from '@/app/components/common/Loading';
+import UnauthorizedView from './components/UnauthorizedView';
+import UserProfileSidebar from './components/UserProfileSidebar';
+import BookingsSection from './components/BookingsSection';
+import ProfileSettingsSection from './components/ProfileSettingsSection';
 
 interface UserProfileClientProps {
   locale: 'en' | 'vi';
@@ -25,7 +23,6 @@ export default function UserProfileClient({
   locale,
   dictionary,
 }: UserProfileClientProps) {
-  const { data: session } = useSession();
   const { push, refresh } = useNavigationLoading();
   const [activeTab, setActiveTab] = useState<'bookings' | 'settings'>(
     'bookings'
@@ -33,18 +30,20 @@ export default function UserProfileClient({
   const [filterStatus, setFilterStatus] = useState<
     'All' | 'pending' | 'confirmed' | 'cancelled'
   >('All');
-
-  const profileDict = dictionary.useProfile || {};
-
   const {
     data: bookings = [],
-    isLoading: loading,
+    isLoading,
+    isFetching,
     error,
-    refetch,
+    refetch: refetchBookings,
   } = useUserBookings();
+  const profileDict = dictionary.useProfile || {};
 
-  const { clearUser, name, email, image } = useUserProfileStore();
-  const sessionUser = session?.user;
+  const { clearUser, name, email, image, phoneNumber } = useUserProfileStore();
+
+  const showSkeleton =
+    (isLoading || (isFetching && bookings.length === 0)) &&
+    bookings.length === 0;
 
   const handleLogout = async () => {
     try {
@@ -81,25 +80,16 @@ export default function UserProfileClient({
     }
   };
 
-  if (!session?.user) {
+  if (!email) {
     return <UnauthorizedView locale={locale} />;
   }
 
   const user = {
-    name: name || sessionUser?.name,
-    email: email || sessionUser?.email,
-    image: image || sessionUser?.image,
+    name: name,
+    email: email,
+    image: image,
+    phoneNumber: phoneNumber,
   };
-
-  if (loading) {
-    <Loading
-      size="lg"
-      text={
-        profileDict.loadingBookings || USER_PROFILE_CONSTANTS.LOADING_BOOKINGS
-      }
-      overlay={false}
-    />;
-  }
 
   if (error) {
     return (
@@ -108,7 +98,7 @@ export default function UserProfileClient({
           profileDict.failedToLoadBookings ||
           USER_PROFILE_CONSTANTS.FAILED_TO_LOAD_BOOKINGS
         }
-        onRetry={refetch}
+        onRetry={refetchBookings}
       />
     );
   }
@@ -133,6 +123,7 @@ export default function UserProfileClient({
                 locale={locale}
                 filterStatus={filterStatus}
                 onFilterChange={setFilterStatus}
+                isLoading={showSkeleton}
               />
             ) : (
               <ProfileSettingsSection

@@ -23,7 +23,7 @@ export default function RenderLoginForm({
   const [pwdValue, setPwdValue] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
-  const { push } = useNavigationLoading();
+  const { push, refresh, isPending } = useNavigationLoading();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,18 +48,21 @@ export default function RenderLoginForm({
             AUTH_LOGIN_CONSTANTS.INVALID_CREDENTIALS
         );
       } else if (result?.ok) {
+        const session = await getSession();
+        const userRole = session?.user?.role;
+
         toast.success(
           loginDict?.login_successful || AUTH_LOGIN_CONSTANTS.LOGIN_SUCCESSFUL
         );
-
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        const session = await getSession();
-        const userRole = session?.user?.role;
 
         if (userRole === 'admin') {
           push(`/${locale}${AUTH_LOGIN_CONSTANTS.ADMIN_HOME_PATH}`);
         } else {
           push(`/${locale}/`);
+        }
+
+        if (!isPending) {
+          refresh();
         }
       }
     } catch {

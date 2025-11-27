@@ -17,7 +17,7 @@ export const TAILWIND = {
 
 export const REQUEST_TIMEOUT = 5000; // in milliseconds
 
-export const TOAST_DURATION = 4000; // in milliseconds
+export const TOAST_DURATION = 1000; // in milliseconds
 
 export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0';
 
@@ -350,6 +350,8 @@ export const BOOKING_VALIDATION_MESSAGES = {
   PHONE_INVALID: 'Please enter a valid phone number',
   DATE_REQUIRED: 'Departure date is required',
   DATE_MUST_BE_FUTURE: 'Departure date must be in the future',
+  DATE_OVERLAP_WITH_EXISTING_BOOKING:
+    'You already have a booking for this tour during that period',
   GUESTS_REQUIRED: 'Number of guests is required',
   GUESTS_MUST_BE_INTEGER: 'Number of guests must be an integer',
   GUESTS_MIN: 'At least 1 guest is required',
@@ -463,6 +465,8 @@ export const USER_PROFILE_CONSTANTS = {
   GUESTS: 'Guests',
   DETAILS: 'Details',
   CANCEL: 'Cancel',
+  DELETE_BOOKING: 'Delete Booking',
+  DELETING: 'Deleting...',
   NO_BOOKINGS: 'No bookings found',
   LOADING_BOOKINGS: 'Loading bookings...',
   FAILED_TO_LOAD_BOOKINGS: 'Failed to load bookings',

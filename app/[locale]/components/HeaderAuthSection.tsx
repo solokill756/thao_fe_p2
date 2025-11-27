@@ -1,7 +1,5 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { LogOut, Menu } from 'lucide-react';
 import { DictType } from '@/app/lib/types/dictType';
@@ -13,23 +11,25 @@ import {
 } from '@/app/lib/constants';
 import { useUserProfileStore } from '@/app/lib/stores/userProfileStore';
 import { useEffect } from 'react';
+import { User } from '@prisma/client';
+import { signOut } from 'next-auth/react';
 
 interface HeaderAuthSectionProps {
   locale: 'en' | 'vi';
   dictionary: DictType;
+  userProfile: User | null;
 }
 
 export default function HeaderAuthSection({
   locale,
   dictionary,
+  userProfile,
 }: HeaderAuthSectionProps) {
   const { push, isPending, refresh } = useNavigationLoading();
   const headerDict = dictionary.common?.header;
-  const { data: session } = useSession();
   const {
     name: storeName,
     image: storeImage,
-    email: storeEmail,
     clearUser,
     setUser,
   } = useUserProfileStore();
@@ -38,16 +38,17 @@ export default function HeaderAuthSection({
   };
 
   useEffect(() => {
-    if (session?.user) {
+    if (userProfile) {
       setUser({
-        name: session.user.name,
-        email: session.user.email,
-        image: session.user.image,
+        name: userProfile.full_name,
+        email: userProfile.email,
+        image: userProfile.avatar_url,
+        phoneNumber: userProfile.phone_number ?? null,
       });
     } else {
       clearUser();
     }
-  }, [session?.user, setUser, clearUser]);
+  }, [userProfile, setUser, clearUser]);
 
   const handleLogout = async () => {
     try {

@@ -14,13 +14,12 @@ import type { DictType } from '@/app/lib/types/dictType';
 import type { BookingWithRelations } from '@/app/actions/user/profile/getUserBookingsAction';
 import {
   LOCALE_STRINGS,
-  PAYMENT_CONSTANTS,
   USER_PROFILE_CONSTANTS,
   BOOKING_STATUS_COLORS,
   PLACEHOLDER_IMAGE_URLS,
   LOCALE_CODES,
 } from '@/app/lib/constants';
-import { useCancelBooking } from '@/app/lib/hooks/useCancelBooking';
+import { useDeleteBooking } from '@/app/lib/hooks/useDeleteBooking';
 import { toast } from 'react-hot-toast';
 
 interface BookingItemProps {
@@ -114,29 +113,28 @@ export default function BookingItem({
   const tourImage =
     booking.tour?.cover_image_url || PLACEHOLDER_IMAGE_URLS.TOUR;
 
-  const cancelBookingMutation = useCancelBooking();
+  const deleteBookingMutation = useDeleteBooking();
 
-  const handleCancelBooking = async () => {
+  const handleDeleteBooking = async () => {
     try {
-      const result = await cancelBookingMutation.mutateAsync({
+      const result = await deleteBookingMutation.mutateAsync({
         bookingId: booking.booking_id,
       });
       if (result.success) {
         toast.success(
-          profileDict.bookingCancelled ||
-            USER_PROFILE_CONSTANTS.BOOKING_CANCELLED
+          profileDict.bookingDeleted || USER_PROFILE_CONSTANTS.BOOKING_DELETED
         );
       } else {
         toast.error(
           result.error ||
-            profileDict.bookingCancellationFailed ||
-            USER_PROFILE_CONSTANTS.BOOKING_CANCELLATION_FAILED
+            profileDict.bookingDeletionFailed ||
+            USER_PROFILE_CONSTANTS.BOOKING_DELETION_FAILED
         );
       }
-    } catch (error) {
+    } catch {
       toast.error(
-        profileDict.bookingCancellationFailed ||
-          USER_PROFILE_CONSTANTS.BOOKING_CANCELLATION_FAILED
+        profileDict.bookingDeletionFailed ||
+          USER_PROFILE_CONSTANTS.BOOKING_DELETION_FAILED
       );
     }
   };
@@ -205,12 +203,13 @@ export default function BookingItem({
             {booking.status === 'pending' && (
               <button
                 className="flex-1 md:flex-none px-4 py-2 border border-red-200 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleCancelBooking}
-                disabled={cancelBookingMutation.isPending}
+                onClick={handleDeleteBooking}
+                disabled={deleteBookingMutation.isPending}
               >
-                {cancelBookingMutation.isPending
-                  ? profileDict.cancelling || USER_PROFILE_CONSTANTS.CANCELLING
-                  : profileDict.cancel || USER_PROFILE_CONSTANTS.CANCEL}
+                {deleteBookingMutation.isPending
+                  ? profileDict.deleting || USER_PROFILE_CONSTANTS.DELETING
+                  : profileDict.deleteBooking ||
+                    USER_PROFILE_CONSTANTS.DELETE_BOOKING}
               </button>
             )}
           </div>

@@ -5,7 +5,6 @@ import type { DictType } from '@/app/lib/types/dictType';
 import { USER_PROFILE_CONSTANTS } from '@/app/lib/constants';
 import { useUpdateUserProfile } from '@/app/lib/hooks/useUpdateUserProfile';
 import { toast } from 'react-hot-toast';
-import { useSession } from 'next-auth/react';
 import { useUserProfileStore } from '@/app/lib/stores/userProfileStore';
 
 interface ProfileFormProps {
@@ -37,21 +36,6 @@ export default function ProfileForm({
     phoneNumber: storePhoneNumber || '',
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-
-  useEffect(() => {
-    if (storeName) {
-      setFormData((prev) => ({
-        ...prev,
-        fullName: storeName,
-      }));
-    }
-    if (storePhoneNumber !== null) {
-      setFormData((prev) => ({
-        ...prev,
-        phoneNumber: storePhoneNumber || '',
-      }));
-    }
-  }, [storeName, storePhoneNumber]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

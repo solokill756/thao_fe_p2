@@ -4,10 +4,8 @@ import { deleteBooking } from '@/app/lib/services/bookingService';
 import { getServerSession } from 'next-auth';
 import { ERROR_MESSAGES } from '@/app/lib/constants';
 import { createUnauthorizedError } from '@/app/lib/utils/errors';
-import {
-  revalidateBookingsCache,
-  revalidateTourDetailCache,
-} from '@/app/lib/services/cacheUtils';
+import { revalidateBookingsCache } from '@/app/lib/services/cacheUtils';
+import prisma from '@/app/lib/prisma';
 
 export async function deleteBookingAction(bookingId: number): Promise<{
   success: boolean;
@@ -16,14 +14,33 @@ export async function deleteBookingAction(bookingId: number): Promise<{
 }> {
   try {
     const session = await getServerSession(authOptions);
-    if (session?.user?.role !== 'admin') {
+    const userRole = session?.user?.role;
+    const isAdmin = userRole === 'admin';
+    const userId = session?.user?.id ? parseInt(session.user.id) : null;
+
+    if (!isAdmin && (!userId || Number.isNaN(userId))) {
+      throw createUnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED);
+    }
+
+    const booking = await prisma.booking.findUnique({
+      where: { booking_id: bookingId },
+      select: { user_id: true },
+    });
+
+    if (!booking) {
+      return {
+        success: false,
+        error: 'Booking not found',
+      };
+    }
+
+    if (!isAdmin && booking.user_id !== userId) {
       throw createUnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED);
     }
 
     await deleteBooking(bookingId);
 
     revalidateBookingsCache();
-    revalidateTourDetailCache();
 
     return {
       success: true,

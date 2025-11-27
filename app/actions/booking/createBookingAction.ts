@@ -11,10 +11,7 @@ import {
   BOOKING_STATUS,
   DEFAULT_LOCALE,
 } from '@/app/lib/constants';
-import {
-  revalidateBookingsCache,
-  revalidateTourDetailCache,
-} from '@/app/lib/services/cacheUtils';
+import { revalidateBookingsCache } from '@/app/lib/services/cacheUtils';
 
 type Locale = 'en' | 'vi';
 
@@ -220,6 +217,53 @@ export async function createBookingAction(
     const bookingDate = new Date(date);
     bookingDate.setHours(0, 0, 0, 0);
 
+    const bookingEndDate = new Date(bookingDate);
+    bookingEndDate.setDate(bookingEndDate.getDate() + tour.duration_days);
+
+    if (userId || email) {
+      const userFilter = userId ? { user_id: userId } : { guest_email: email };
+
+      const userBookings = await prisma.booking.findMany({
+        where: {
+          tour_id: tourId,
+          status: {
+            not: BOOKING_STATUS.CANCELLED,
+          },
+          ...userFilter,
+        },
+        select: {
+          booking_date: true,
+        },
+      });
+
+      const hasOverlappingBooking = userBookings.some(({ booking_date }) => {
+        const existingStartDate = new Date(booking_date);
+        existingStartDate.setHours(0, 0, 0, 0);
+
+        const existingEndDate = new Date(existingStartDate);
+        existingEndDate.setDate(existingEndDate.getDate() + tour.duration_days);
+
+        return (
+          bookingDate <= existingEndDate && existingStartDate <= bookingEndDate
+        );
+      });
+
+      if (hasOverlappingBooking) {
+        return {
+          success: false,
+          message:
+            dict.tourDetail?.validation?.dateOverlapExistingBooking ||
+            BOOKING_VALIDATION_MESSAGES.DATE_OVERLAP_WITH_EXISTING_BOOKING,
+          errors: {
+            date: [
+              dict.tourDetail?.validation?.dateOverlapExistingBooking ||
+                BOOKING_VALIDATION_MESSAGES.DATE_OVERLAP_WITH_EXISTING_BOOKING,
+            ],
+          },
+        };
+      }
+    }
+
     const whereClause: {
       tour_id: number;
       booking_date: Date;
@@ -273,7 +317,6 @@ export async function createBookingAction(
     });
 
     revalidateBookingsCache();
-    revalidateTourDetailCache();
 
     return {
       success: true,

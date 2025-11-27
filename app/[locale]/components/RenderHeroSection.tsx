@@ -15,7 +15,6 @@ export default async function RenderHeroSection({
 }: RenderHeroSectionProps) {
   const homepageDict = dictionary.homepage;
 
-  // Fetch destinations on server
   const destinations = await getDestinations();
 
   return (

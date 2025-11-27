@@ -1,5 +1,5 @@
 import { getDictionary } from '@/app/lib/get-dictionary';
-import UserProfileClient from './components/UserProfileClient';
+import UserProfileClient from './UserProfileClient';
 
 type Props = {
   params: Promise<{ locale: 'en' | 'vi' }>;
@@ -8,6 +8,5 @@ type Props = {
 export default async function RenderUserProfilePage({ params }: Props) {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-
   return <UserProfileClient locale={locale} dictionary={dictionary} />;
 }

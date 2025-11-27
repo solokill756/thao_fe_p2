@@ -23,7 +23,7 @@ export default function RenderSocialLogins({
 }: SocialLoginsProps) {
   const loginDict = dictionary.auth?.login;
   const [isLoading, setIsLoading] = useState(false);
-  const { push } = useNavigationLoading();
+  const { push, refresh, isPending } = useNavigationLoading();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -38,18 +38,21 @@ export default function RenderSocialLogins({
           loginDict?.googleSignInError || AUTH_MESSAGES.GOOGLE_SIGN_IN_FAILED
         );
       } else if (result?.ok) {
+        const session = await getSession();
+        const userRole = session?.user?.role;
+
         toast.success(
           loginDict?.login_successful || AUTH_MESSAGES.LOGIN_SUCCESSFUL
         );
-
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        const session = await getSession();
-        const userRole = session?.user?.role;
 
         if (userRole === 'admin') {
           push(`/${locale}${AUTH_LOGIN_CONSTANTS.ADMIN_HOME_PATH}`);
         } else {
           push(`/${locale}/`);
+        }
+
+        if (!isPending) {
+          refresh();
         }
       }
     } catch {

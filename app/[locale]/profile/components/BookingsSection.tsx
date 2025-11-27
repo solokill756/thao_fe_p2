@@ -5,6 +5,7 @@ import type { BookingWithRelations } from '@/app/actions/user/profile/getUserBoo
 import { USER_PROFILE_CONSTANTS } from '@/app/lib/constants';
 import BookingFilters from './BookingFilters';
 import BookingsList from './BookingsList';
+import BookingsSkeleton from './BookingsSkeleton';
 
 interface BookingsSectionProps {
   bookings: BookingWithRelations[];
@@ -14,6 +15,7 @@ interface BookingsSectionProps {
   onFilterChange: (
     status: 'All' | 'pending' | 'confirmed' | 'cancelled'
   ) => void;
+  isLoading?: boolean;
 }
 
 export default function BookingsSection({
@@ -22,6 +24,7 @@ export default function BookingsSection({
   locale,
   filterStatus,
   onFilterChange,
+  isLoading = false,
 }: BookingsSectionProps) {
   const profileDict = dictionary.useProfile || {};
 
@@ -34,10 +37,12 @@ export default function BookingsSection({
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
         {profileDict.myBookings || USER_PROFILE_CONSTANTS.MY_BOOKINGS}{' '}
-        <span className="ml-3 text-sm font-normal text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200">
-          {filteredBookings.length}{' '}
-          {profileDict.items || USER_PROFILE_CONSTANTS.ITEMS}
-        </span>
+        {!isLoading && (
+          <span className="ml-3 text-sm font-normal text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200">
+            {filteredBookings.length}{' '}
+            {profileDict.items || USER_PROFILE_CONSTANTS.ITEMS}
+          </span>
+        )}
       </h1>
 
       <BookingFilters
@@ -46,11 +51,15 @@ export default function BookingsSection({
         onFilterChange={onFilterChange}
       />
 
-      <BookingsList
-        bookings={filteredBookings}
-        dictionary={dictionary}
-        locale={locale}
-      />
+      {isLoading ? (
+        <BookingsSkeleton />
+      ) : (
+        <BookingsList
+          bookings={filteredBookings}
+          dictionary={dictionary}
+          locale={locale}
+        />
+      )}
     </div>
   );
 }

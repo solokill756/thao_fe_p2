@@ -6,4 +6,6 @@ export const CACHE_TAGS = {
   TOUR_DETAIL: 'tour:detail',
   TOURS_ADMIN: 'tours:admin',
   BOOKINGS: 'bookings',
+  USERS: 'users',
+  USERS_ADMIN: 'users:admin',
 } as const;
