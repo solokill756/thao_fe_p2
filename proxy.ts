@@ -27,10 +27,10 @@ function getPreferredLocale(request: NextRequest): string {
   return 'en';
 }
 
-const protectedPaths: string[] = [];
+const protectedPaths: string[] = ['/admin', '/payment', '/review'];
 const loginPath = '/auth';
 
-export async function proxy(request: NextRequest) {
+export async function validateRequest(request: NextRequest) {
   if (request.headers.has('next-action')) {
     return NextResponse.next();
   }
@@ -80,9 +80,7 @@ export async function proxy(request: NextRequest) {
     pathnameWithoutLocale.startsWith(loginPath);
 
   if (isLoginPage && token) {
-    return NextResponse.redirect(
-      new URL(`/${currentLocale}/user/home`, request.url)
-    );
+    return NextResponse.redirect(new URL(`/${currentLocale}/`, request.url));
   }
 
   if (isLoginPage) {
@@ -104,3 +102,5 @@ export const config = {
     '/((?!api|__NEXT_ACTIONS__|_next/static|_next/image|favicon.ico).*)',
   ],
 };
+
+export { validateRequest as proxy };

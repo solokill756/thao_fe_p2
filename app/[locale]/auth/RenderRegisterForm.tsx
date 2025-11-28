@@ -1,8 +1,8 @@
 'use client';
 
 import { useActionState, useEffect, useRef, useState } from 'react';
-import { DictType } from '@/app/lib/type/dictType';
-import { registerState } from '@/app/lib/type/actionType';
+import { DictType } from '@/app/lib/types/dictType';
+import { registerState } from '@/app/lib/types/actionType';
 import { registerAction } from '@/app/actions/auth/registerAction';
 import toast from 'react-hot-toast';
 import AuthInput from './RenderAuthInput';
@@ -11,6 +11,7 @@ import {
   AUTH_MESSAGES,
   AUTH_LABELS,
   AUTH_PLACEHOLDERS,
+  TOAST_DURATIONS,
 } from '@/app/lib/constants';
 
 interface RegisterFormProps {
@@ -88,7 +89,6 @@ export default function RenderRegisterForm({
       }, 100);
       toastShownRef.current = true;
     } else if (hasErrors) {
-
       const allErrors: string[] = [];
       const errorFields = [
         'email',
@@ -109,7 +109,6 @@ export default function RenderRegisterForm({
         }
       });
 
-
       if (allErrors.length === 0) {
         const defaultMessage =
           dictionary.auth?.register?.registrationFailed ??
@@ -118,11 +117,14 @@ export default function RenderRegisterForm({
       } else if (allErrors.length === 1) {
         toast.error(allErrors[0]);
       } else {
-        const errorList = allErrors.map((error, index) => `${index + 1}. ${error}`).join('\n');
+        const errorList = allErrors
+          .map((error, index) => `${index + 1}. ${error}`)
+          .join('\n');
         const multipleErrorsLabel =
-          dictionary.auth?.register?.multipleErrors ?? AUTH_MESSAGES.MULTIPLE_ERRORS;
+          dictionary.auth?.register?.multipleErrors ??
+          AUTH_MESSAGES.MULTIPLE_ERRORS;
         toast.error(`${multipleErrorsLabel}\n${errorList}`, {
-          duration: 5000,
+          duration: TOAST_DURATIONS.ERROR,
         });
       }
       toastShownRef.current = true;

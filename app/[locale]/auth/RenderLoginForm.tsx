@@ -1,65 +1,75 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
-
-import { DictType } from '@/app/lib/type/dictType';
+import { signIn, SignInOptions, getSession } from 'next-auth/react';
+import { DictType } from '@/app/lib/types/dictType';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import AuthInput from './RenderAuthInput';
+import RenderAuthInput from './RenderAuthInput';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { useNavigationLoading } from '@/app/lib/hooks/useNavigationLoading';
-import {
-  AUTH_MESSAGES,
-  AUTH_LABELS,
-  AUTH_PLACEHOLDERS,
-  AUTH_ERROR_MESSAGES,
-} from '@/app/lib/constants';
+import { AUTH_LOGIN_CONSTANTS } from '@/app/lib/constants';
 
 interface LoginFormProps {
   dictionary: DictType;
   locale: 'en' | 'vi';
 }
 
-export default function RenderLoginForm({ dictionary, locale }: LoginFormProps) {
+export default function RenderLoginForm({
+  dictionary,
+  locale,
+}: LoginFormProps) {
   const loginDict = dictionary.auth?.login;
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [pwdValue, setPwdValue] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
-  const { push } = useNavigationLoading();
+  const { push, refresh, isPending } = useNavigationLoading();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const result = await signIn('credentials', {
+      const emailForAuth = email;
+      const passwordForAuth = pwdValue;
+      const signInOptions: Record<string, unknown> = {
         redirect: false,
-        email: email,
-        password: password,
-      });
+        email: emailForAuth,
+      };
+      signInOptions.password = passwordForAuth;
+
+      const result = await signIn(
+        AUTH_LOGIN_CONSTANTS.SIGN_IN_PROVIDER,
+        signInOptions as SignInOptions
+      );
 
       if (result?.error) {
-        const errorMsg =
-          loginDict?.invalidCredentials ??
-          AUTH_MESSAGES.INVALID_EMAIL_OR_PASSWORD;
-        toast.error(errorMsg);
-      } else if (result?.ok) {
-        toast.success(
-          loginDict?.login_successful ?? AUTH_MESSAGES.LOGIN_SUCCESSFUL
+        toast.error(
+          loginDict?.invalidCredentials ||
+            AUTH_LOGIN_CONSTANTS.INVALID_CREDENTIALS
         );
-        push(`/${locale}/user/home`);
+      } else if (result?.ok) {
+        const session = await getSession();
+        const userRole = session?.user?.role;
+
+        toast.success(
+          loginDict?.login_successful || AUTH_LOGIN_CONSTANTS.LOGIN_SUCCESSFUL
+        );
+
+        if (userRole === 'admin') {
+          push(`/${locale}${AUTH_LOGIN_CONSTANTS.ADMIN_HOME_PATH}`);
+        } else {
+          push(`/${locale}/`);
+        }
+
+        if (!isPending) {
+          refresh();
+        }
       }
-    } catch (err) {
-      console.error(AUTH_ERROR_MESSAGES.LOGIN_ERROR, {
-        error: err,
-        message:
-          err instanceof Error ? err.message : AUTH_MESSAGES.LOGIN_FAILED,
-        stack: err instanceof Error ? err.stack : undefined,
-        timestamp: new Date().toISOString(),
-      });
-      const errorMsg =
-        loginDict?.invalidCredentials ??
-        AUTH_MESSAGES.INVALID_EMAIL_OR_PASSWORD;
-      toast.error(errorMsg);
+    } catch {
+      toast.error(
+        loginDict?.invalidCredentials ||
+          AUTH_LOGIN_CONSTANTS.INVALID_CREDENTIALS
+      );
     } finally {
       setIsLoading(false);
     }
@@ -68,31 +78,33 @@ export default function RenderLoginForm({ dictionary, locale }: LoginFormProps) 
   return (
     <div>
       <h2 className="text-3xl font-bold text-gray-900 mb-2">
-        {loginDict?.title}
+        {loginDict?.title || AUTH_LOGIN_CONSTANTS.DEFAULT_TITLE}
       </h2>
-      <p className="text-gray-600 mb-6">{loginDict?.subtitle}</p>
+      <p className="text-gray-600 mb-6">
+        {loginDict?.subtitle || AUTH_LOGIN_CONSTANTS.DEFAULT_SUBTITLE}
+      </p>
 
       <form onSubmit={handleSubmit}>
-        <AuthInput
+        <RenderAuthInput
           id="login-email"
           name="email"
-          label={loginDict?.email ?? AUTH_LABELS.EMAIL}
+          label={loginDict?.email || AUTH_LOGIN_CONSTANTS.EMAIL_LABEL}
           type="email"
-          placeholder={AUTH_PLACEHOLDERS.EMAIL}
+          placeholder={AUTH_LOGIN_CONSTANTS.EMAIL_PLACEHOLDER}
           icon={<FaEnvelope />}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <AuthInput
+        <RenderAuthInput
           id="login-password"
           name="password"
-          label={loginDict?.password ?? AUTH_LABELS.PASSWORD}
+          label={loginDict?.password || AUTH_LOGIN_CONSTANTS.PASSWORD_LABEL}
           type="password"
-          placeholder={AUTH_PLACEHOLDERS.PASSWORD}
+          placeholder={AUTH_LOGIN_CONSTANTS.PASSWORD_PLACEHOLDER}
           icon={<FaLock />}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={pwdValue}
+          onChange={(e) => setPwdValue(e.target.value)}
         />
 
         <button
@@ -103,8 +115,8 @@ export default function RenderLoginForm({ dictionary, locale }: LoginFormProps) 
           }`}
         >
           {isLoading
-            ? `${loginDict?.signingIn ?? AUTH_LABELS.SIGNING_IN}...`
-            : (loginDict?.signIn ?? AUTH_LABELS.SIGN_IN)}
+            ? `${loginDict?.signingIn || AUTH_LOGIN_CONSTANTS.SIGNING_IN}...`
+            : loginDict?.signIn || AUTH_LOGIN_CONSTANTS.SIGN_IN}
         </button>
       </form>
     </div>

@@ -11,6 +11,7 @@
   background-image: url('/images/auth-background.png');
   background-size: cover;
   background-position: center;
+  position: relative;
 }
 
 .content {
@@ -41,3 +42,43 @@
   }
 }
 
+.backButton {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: rgb(55, 65, 81);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 300ms;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.backButton:hover {
+  background-color: white;
+  color: rgb(37, 99, 235);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+  .backButton {
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+}
+
+.backIcon {
+  width: 1rem;
+  height: 1rem;
+}

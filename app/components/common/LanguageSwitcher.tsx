@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { i18nConfig } from '@/app/lib/i18n-config';
-import { DictType } from '@/app/lib/type/dictType';
+import { DictType } from '@/app/lib/types/dictType';
 import { useNavigationLoading } from '@/app/lib/hooks/useNavigationLoading';
 
 interface LanguageSwitcherProps {

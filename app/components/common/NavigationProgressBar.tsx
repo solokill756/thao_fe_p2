@@ -22,7 +22,9 @@ export default function NavigationProgressBar() {
       const interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 90) return prev;
-          return prev + Math.random() * 30;
+          const randomValue =
+            crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1);
+          return prev + randomValue * 30;
         });
       }, 300);
       return () => clearInterval(interval);
@@ -33,7 +35,7 @@ export default function NavigationProgressBar() {
 
   return (
     <div
-      className="fixed top-0 left-0 h-1 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 transition-all duration-300 z-50 shadow-lg"
+      className="fixed top-0 left-0 h-1 bg-linear-to-r from-blue-500 via-blue-600 to-blue-700 transition-all duration-300 z-50 shadow-lg"
       style={{
         width: `${Math.min(progress, 100)}%`,
         opacity: progress > 0 && progress < 100 ? 1 : 0,

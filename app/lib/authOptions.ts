@@ -75,8 +75,6 @@ export const authOptions: NextAuthOptions = {
           );
           return {
             id: user.user_id.toString(),
-            name: user.full_name,
-            email: user.email,
             role: user.role,
           };
         } catch (error) {

@@ -1,6 +1,10 @@
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../lib/authOptions';
+import { Suspense } from 'react';
+import { getDictionary } from '../lib/get-dictionary';
+import RenderHeroSectionSkeleton from '../components/sekeleton/RenderHeroSectionSkeleton';
+import TrendingPackagesSkeleton from '../components/sekeleton/TrendingPackagesSkeleton';
+import RenderHeroSection from './components/RenderHeroSection';
+import RenderServicesSection from './components/RenderServicesSection';
+import RenderTrendingPackagesSection from './components/RenderTrendingPackagesSection';
 
 type Props = {
   params: Promise<{ locale: 'en' | 'vi' }>;
@@ -8,13 +12,22 @@ type Props = {
 
 export default async function RenderHomePage({ params }: Props) {
   const { locale } = await params;
-  const session = await getServerSession(authOptions);
+  const dictionary = await getDictionary(locale);
 
-  // Nếu đã đăng nhập, redirect về user home
-  if (session) {
-    redirect(`/${locale}/user/home`);
-  }
+  return (
+    <>
+      <Suspense fallback={<RenderHeroSectionSkeleton />}>
+        <RenderHeroSection dictionary={dictionary} />
+      </Suspense>
 
-  // Nếu chưa đăng nhập, redirect về trang auth
-  redirect(`/${locale}/auth`);
+      <RenderServicesSection dictionary={dictionary} />
+
+      <Suspense fallback={<TrendingPackagesSkeleton />}>
+        <RenderTrendingPackagesSection
+          dictionary={dictionary}
+          locale={locale}
+        />
+      </Suspense>
+    </>
+  );
 }

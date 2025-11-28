@@ -1,0 +1,68 @@
+'use server';
+
+import {
+  fecthBookingById,
+  updateBookingStatus,
+} from '@/app/lib/services/bookingService';
+import { authOptions } from '@/app/lib/authOptions';
+import { getServerSession } from 'next-auth';
+import { ERROR_MESSAGES } from '@/app/lib/constants';
+import { createUnauthorizedError } from '@/app/lib/utils/errors';
+import { revalidateBookingsCache } from '@/app/lib/services/cacheUtils';
+
+export async function updateBookingStatusAction(
+  bookingId: number,
+  newStatus: 'pending' | 'confirmed' | 'cancelled'
+): Promise<{
+  success: boolean;
+  message?: string;
+  error?: string;
+}> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (session?.user?.role !== 'admin') {
+      throw createUnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED);
+    }
+    if (newStatus === 'confirmed') {
+      const booking = await fecthBookingById(bookingId);
+      const bookingStartDate = new Date(booking.booking_date);
+      bookingStartDate.setHours(0, 0, 0, 0);
+
+      const durationDays = Number(booking.tour?.duration_days ?? 0);
+      const bookingEndDate = new Date(bookingStartDate);
+      bookingEndDate.setDate(bookingEndDate.getDate() + durationDays);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (today > bookingEndDate) {
+        await updateBookingStatus(bookingId, 'cancelled');
+        revalidateBookingsCache();
+        return {
+          success: false,
+          error:
+            'Booking date is in the past. The booking was cancelled automatically.',
+        };
+      }
+    }
+    await updateBookingStatus(bookingId, newStatus);
+    revalidateBookingsCache();
+    return {
+      success: true,
+      message: 'Booking status updated successfully',
+    };
+  } catch (error) {
+    console.error('Error updating booking status:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+      action: 'updateBookingStatusAction',
+      bookingId,
+      newStatus,
+    });
+    return {
+      success: false,
+      error: 'Error updating booking status',
+    };
+  }
+}

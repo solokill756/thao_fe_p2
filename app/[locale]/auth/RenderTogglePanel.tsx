@@ -1,5 +1,5 @@
-import { DictType } from '@/app/lib/type/dictType';
-import styles from './RenderTogglePanel.module.css';
+import { DictType } from '@/app/lib/types/dictType';
+import styles from '@/app/lib/css/RenderTogglePanel.module.css';
 
 interface TogglePanelProps {
   mode: 'login' | 'register';

@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next/initReactI18next';
 import { i18nConfig } from '../lib/i18n-config';
-import { DictType } from '../lib/type/dictType';
+import { DictType } from '../lib/types/dictType';
 
 export default function CreateI18nProvider({
   children,

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Loading Component should match snapshot 1`] = `
+<div>
+  <div
+    data-testid="admin-bookings-page-skeleton"
+  >
+    Loading skeleton
+  </div>
+</div>
+`;

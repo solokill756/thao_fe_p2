@@ -26,8 +26,13 @@ CREATE TYPE "BookingStatus" AS ENUM ('pending', 'confirmed', 'cancelled');
 -- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('pending', 'completed', 'failed');
 
--- DropForeignKey
-ALTER TABLE "posts" DROP CONSTRAINT "posts_userId_fkey";
+-- DropForeignKey (only if table exists)
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'posts') THEN
+    ALTER TABLE "posts" DROP CONSTRAINT IF EXISTS "posts_userId_fkey";
+  END IF;
+END $$;
 
 -- AlterTable
 ALTER TABLE "users" DROP CONSTRAINT "users_pkey",
@@ -51,8 +56,8 @@ DROP COLUMN "role",
 ADD COLUMN     "role" "Role" NOT NULL DEFAULT 'user',
 ADD CONSTRAINT "users_pkey" PRIMARY KEY ("user_id");
 
--- DropTable
-DROP TABLE "posts";
+-- DropTable (only if table exists)
+DROP TABLE IF EXISTS "posts";
 
 -- CreateTable
 CREATE TABLE "categories" (

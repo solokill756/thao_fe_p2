@@ -1,7 +1,7 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
-import { DictType } from '@/app/lib/type/dictType';
+import { signIn, getSession } from 'next-auth/react';
+import { DictType } from '@/app/lib/types/dictType';
 import { FaGoogle } from 'react-icons/fa';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -9,7 +9,7 @@ import { useNavigationLoading } from '@/app/lib/hooks/useNavigationLoading';
 import {
   AUTH_MESSAGES,
   AUTH_LABELS,
-  AUTH_ERROR_MESSAGES,
+  AUTH_LOGIN_CONSTANTS,
 } from '@/app/lib/constants';
 
 interface SocialLoginsProps {
@@ -23,25 +23,42 @@ export default function RenderSocialLogins({
 }: SocialLoginsProps) {
   const loginDict = dictionary.auth?.login;
   const [isLoading, setIsLoading] = useState(false);
-  const { push } = useNavigationLoading();
+  const { push, refresh, isPending } = useNavigationLoading();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
       const result = await signIn('google', {
         redirect: false,
-        callbackUrl: `/${locale}/user/home`,
+        callbackUrl: `/${locale}/`,
       });
 
       if (result?.error) {
-        toast.error(loginDict?.googleSignInError || AUTH_MESSAGES.GOOGLE_SIGN_IN_FAILED);
+        toast.error(
+          loginDict?.googleSignInError || AUTH_MESSAGES.GOOGLE_SIGN_IN_FAILED
+        );
       } else if (result?.ok) {
-        toast.success(loginDict?.login_successful || AUTH_MESSAGES.LOGIN_SUCCESSFUL);
-        push(`/${locale}/user/home`);
+        const session = await getSession();
+        const userRole = session?.user?.role;
+
+        toast.success(
+          loginDict?.login_successful || AUTH_MESSAGES.LOGIN_SUCCESSFUL
+        );
+
+        if (userRole === 'admin') {
+          push(`/${locale}${AUTH_LOGIN_CONSTANTS.ADMIN_HOME_PATH}`);
+        } else {
+          push(`/${locale}/`);
+        }
+
+        if (!isPending) {
+          refresh();
+        }
       }
-    } catch (err) {
-      console.error(AUTH_ERROR_MESSAGES.GOOGLE_SIGN_IN_ERROR, err);
-      toast.error(loginDict?.googleSignInError || AUTH_MESSAGES.GOOGLE_SIGN_IN_FAILED);
+    } catch {
+      toast.error(
+        loginDict?.googleSignInError || AUTH_MESSAGES.GOOGLE_SIGN_IN_FAILED
+      );
     } finally {
       setIsLoading(false);
     }

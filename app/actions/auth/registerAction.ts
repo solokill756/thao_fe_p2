@@ -1,15 +1,17 @@
 'use server';
 
 import { createUser } from '@/app/lib/services/userService';
-import { registerState } from '@/app/lib/type/actionType';
+import { registerState } from '@/app/lib/types/actionType';
 import bcrypt from 'bcryptjs';
 import z from 'zod';
 import { getDictionary } from '@/app/lib/get-dictionary';
-import { DictType } from '@/app/lib/type/dictType';
+import { DictType } from '@/app/lib/types/dictType';
 
 type Locale = 'en' | 'vi';
 
-const MIN_PASSWORD_LENGTH = 6;
+import { AUTH_CONFIG } from '@/app/lib/constants';
+
+const MIN_PASSWORD_LENGTH = AUTH_CONFIG.MIN_PASSWORD_LENGTH;
 const CONFIRM_PASSWORD_FIELD = 'confirmPassword' as const;
 
 const createRegisterSchema = (dict: DictType) =>
@@ -88,14 +90,15 @@ export async function registerAction(
       errors: {},
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessageText =
+      error instanceof Error ? error.message : String(error);
 
     if (
-      errorMessage.includes('Unique constraint failed on the fields: (`email`)') ||
-      (
-        errorMessage.toLowerCase().includes('unique constraint') &&
-        errorMessage.toLowerCase().includes('email')
-      )
+      errorMessageText.includes(
+        'Unique constraint failed on the fields: (`email`)'
+      ) ||
+      (errorMessageText.toLowerCase().includes('unique constraint') &&
+        errorMessageText.toLowerCase().includes('email'))
     ) {
       return {
         message: '',
